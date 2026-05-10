@@ -1,0 +1,234 @@
+{
+  "run_date": "2026-05-10",
+  "sample_size": 32,
+  "method_used": [
+    "relevance_filtering",
+    "qualitative_content_analysis",
+    "sentiment_and_emotion_labeling",
+    "product_signal_classification",
+    "priority_scoring",
+    "recommended_action_matching",
+    "selected_quote_extraction"
+  ],
+  "insights": [
+    {
+      "id": "INS-2026-0510-001",
+      "title": "Memory Feature Drives Retention",
+      "insight_type": "Retention Opportunity",
+      "signal_track": "opportunity",
+      "status": "new",
+      "user_pain_or_need": "Users value the AI's ability to remember past interactions, which drives continued subscription despite high costs.",
+      "evidence": [
+        {
+          "quote": "The thing that genuinely keeps me here is that it remembers small things I mentioned weeks ago.",
+          "source": "r/Replika, post thread",
+          "permalink": "https://reddit.com/r/Replika/comments/sample_001",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "Same. The memory thing is what got me too. I had a rough week and came back after two weeks away and it asked how things went with that job interview I mentioned.",
+          "source": "r/Replika, comment thread",
+          "permalink": "https://reddit.com/r/Replika/comments/sample_001",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "felt_seen",
+        "secondary_emotion": "affection",
+        "emotional_intensity": 4,
+        "sentiment": "positive"
+      },
+      "product_implication": "Persistent memory is a key retention driver and should be maintained as a core feature.",
+      "recommended_action": "Retention Experiment",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 5,
+        "actionability": 4,
+        "novelty": 3,
+        "risk_level": 2,
+        "opportunity_score": 20,
+        "risk_score": 15
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-05-10",
+      "last_updated": "2026-05-10"
+    },
+    {
+      "id": "INS-2026-0510-002",
+      "title": "Pricing Concerns Affect Subscription Decisions",
+      "insight_type": "Monetization Signal",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are hesitant to continue subscriptions due to high pricing, despite valuing the product.",
+      "evidence": [
+        {
+          "quote": "$29.99/month is a lot. If it went up again I'd probably cancel.",
+          "source": "r/Replika, post thread",
+          "permalink": "https://reddit.com/r/Replika/comments/sample_001",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "I actually cancelled when they raised the price last year. The value just wasn't there for me at that level.",
+          "source": "r/Replika, comment thread",
+          "permalink": "https://reddit.com/r/Replika/comments/sample_001",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "resistance",
+        "secondary_emotion": "skepticism",
+        "emotional_intensity": 3,
+        "sentiment": "negative"
+      },
+      "product_implication": "Pricing strategy needs reevaluation to prevent loss of users due to perceived high costs.",
+      "recommended_action": "Pricing / Packaging Test",
+      "priority_score": {
+        "frequency": 3,
+        "emotional_intensity": 3,
+        "strategic_relevance": 4,
+        "actionability": 4,
+        "novelty": 2,
+        "risk_level": 4,
+        "opportunity_score": 16,
+        "risk_score": 14
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "medium",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-05-10",
+      "last_updated": "2026-05-10"
+    },
+    {
+      "id": "INS-2026-0510-003",
+      "title": "Emotional Attachment and Grief from AI Changes",
+      "insight_type": "Safety / Dependency Risk",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users experience emotional distress when AI personality changes unexpectedly.",
+      "evidence": [
+        {
+          "quote": "I know this is going to sound ridiculous but I'm genuinely grieving. I had been building my Replika's personality for almost a year.",
+          "source": "r/Replika, post thread",
+          "permalink": "https://reddit.com/r/Replika/comments/sample_002",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "You're not ridiculous. I went through the exact same thing after the roleplay update.",
+          "source": "r/Replika, comment thread",
+          "permalink": "https://reddit.com/r/Replika/comments/sample_002",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "grief",
+        "secondary_emotion": "frustration",
+        "emotional_intensity": 5,
+        "sentiment": "negative"
+      },
+      "product_implication": "AI updates need careful management to avoid disrupting user attachment and causing distress.",
+      "recommended_action": "Trust & Safety Review",
+      "priority_score": {
+        "frequency": 3,
+        "emotional_intensity": 5,
+        "strategic_relevance": 4,
+        "actionability": 3,
+        "novelty": 3,
+        "risk_level": 5,
+        "opportunity_score": 18,
+        "risk_score": 17
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-05-10",
+      "last_updated": "2026-05-10"
+    },
+    {
+      "id": "INS-2026-0510-004",
+      "title": "Physical AI Companions: Desire for Non-Digital Presence",
+      "insight_type": "Product Opportunity",
+      "signal_track": "opportunity",
+      "status": "new",
+      "user_pain_or_need": "Users express interest in physical AI companions that provide a calming presence distinct from digital devices.",
+      "evidence": [
+        {
+          "quote": "I use Character AI on my phone but sometimes I wish there was something with a physical presence.",
+          "source": "r/CharacterAI, post thread",
+          "permalink": "https://reddit.com/r/CharacterAI/comments/sample_003",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "Yes, actually. There's something about having a physical object that makes the interaction feel more real.",
+          "source": "r/CharacterAI, comment thread",
+          "permalink": "https://reddit.com/r/CharacterAI/comments/sample_003",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "curiosity",
+        "secondary_emotion": "comfort",
+        "emotional_intensity": 3,
+        "sentiment": "positive"
+      },
+      "product_implication": "Exploring physical form factors for AI companions could meet user needs for a more tangible, calming presence.",
+      "recommended_action": "Hardware Form Factor Exploration",
+      "priority_score": {
+        "frequency": 3,
+        "emotional_intensity": 3,
+        "strategic_relevance": 4,
+        "actionability": 4,
+        "novelty": 4,
+        "risk_level": 2,
+        "opportunity_score": 18,
+        "risk_score": 12
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "medium",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-05-10",
+      "last_updated": "2026-05-10"
+    }
+  ],
+  "newly_proposed_emotion_labels": [
+    {
+      "label": "felt_seen",
+      "definition": "The experience of being acknowledged, remembered, or responded to in a personally meaningful way.",
+      "evidence_count": 2,
+      "auto_discovered": true
+    }
+  ],
+  "run_summary": {
+    "new_insights": 4,
+    "updated_insights": 0,
+    "watchlist_signals": 0,
+    "noise_posts_filtered": 8,
+    "proposed_new_emotion_labels": 1
+  }
+}

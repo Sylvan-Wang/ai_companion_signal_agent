@@ -1,0 +1,176 @@
+# AI Companion Signal Intelligence Agent — Daily Report Workflow
+#
+# Runs every day at 17:00 UTC (≈ 09:00 PST / 10:00 PDT).
+# Can also be triggered manually from the Actions tab.
+#
+# Required secrets (Settings → Secrets and variables → Actions):
+#   OPENAI_API_KEY        — OpenAI API key (required for all phases)
+#   REDDIT_CLIENT_ID      — From reddit.com/prefs/apps (Phase 3 only)
+#   REDDIT_CLIENT_SECRET  — From reddit.com/prefs/apps (Phase 3 only)
+#   REDDIT_USER_AGENT     — e.g. "ai_companion_signal_agent/0.1 by yourusername" (Phase 3 only)
+#
+# Phase 1 (sample data):  Only OPENAI_API_KEY required.
+# Phase 2 (this file):    GitHub Actions automation active, still uses sample data.
+# Phase 3 (live Reddit):  Set all four secrets — agent auto-detects and switches to live mode.
+
+name: Daily AI Companion Signal Intelligence
+
+on:
+  schedule:
+    # 17:00 UTC daily = ~09:00 PST / 10:00 PDT
+    - cron: "0 17 * * *"
+
+  workflow_dispatch:
+    inputs:
+      run_date:
+        description: "Override run date (YYYY-MM-DD). Leave blank to use today."
+        required: false
+        default: ""
+      dry_run:
+        description: "Dry run — collect and clean only, skip LLM analysis"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+permissions:
+  contents: write   # Needed to commit reports back to the repo
+
+jobs:
+  run-signal-agent:
+    name: Collect · Clean · Analyze · Save
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      # ── 2. Python setup ────────────────────────────────────────────────────────
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # ── 3. Install dependencies ────────────────────────────────────────────────
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # ── 4. Validate environment ────────────────────────────────────────────────
+      - name: Validate required secrets
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "ERROR: OPENAI_API_KEY secret is not set."
+            echo "Go to Settings → Secrets and variables → Actions → New repository secret."
+            exit 1
+          fi
+          echo "OPENAI_API_KEY: present"
+
+          # Reddit credentials are optional — agent auto-detects and falls back to sample data
+          if [ -z "$REDDIT_CLIENT_ID" ]; then
+            echo "REDDIT credentials: not set — agent will use sample data (Phase 2 mode)"
+          else
+            echo "REDDIT credentials: present — agent will use live Reddit data (Phase 3 mode)"
+          fi
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+
+      # ── 5. Run the agent ───────────────────────────────────────────────────────
+      - name: Run daily signal agent
+        run: |
+          echo "Starting AI Companion Signal Intelligence Agent..."
+
+          # Optional: inject a custom run date from workflow_dispatch input
+          if [ -n "${{ github.event.inputs.run_date }}" ]; then
+            export SIGNAL_AGENT_RUN_DATE="${{ github.event.inputs.run_date }}"
+            echo "Using override run date: $SIGNAL_AGENT_RUN_DATE"
+          fi
+
+          # Optional: dry run flag (skips LLM call)
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            export SIGNAL_AGENT_DRY_RUN="true"
+            echo "Dry run mode: LLM analysis will be skipped"
+          fi
+
+          python scripts/run_daily.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
+
+      # ── 6. Commit report back to repo ─────────────────────────────────────────
+      - name: Commit generated report
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stage only the reports/daily/ output — never stage .env or secrets
+          git add reports/daily/
+
+          # Check if there's anything new to commit
+          if git diff --staged --quiet; then
+            echo "No new report files — nothing to commit."
+          else
+            # Construct commit message
+            RUN_DATE=$(python -c "from datetime import date; print(date.today().isoformat())")
+            if [ -n "${{ github.event.inputs.run_date }}" ]; then
+              RUN_DATE="${{ github.event.inputs.run_date }}"
+            fi
+
+            TRIGGER="scheduled"
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              TRIGGER="manual"
+            fi
+
+            git commit -m "chore(report): AI companion signal report ${RUN_DATE} [${TRIGGER}]"
+            git push
+            echo "Report committed and pushed."
+          fi
+
+      # ── 7. Upload report as artifact ───────────────────────────────────────────
+      - name: Upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: signal-report-${{ github.run_id }}
+          path: reports/daily/
+          retention-days: 30
+          if-no-files-found: warn
+
+      # ── 8. Summary ─────────────────────────────────────────────────────────────
+      - name: Write job summary
+        if: always()
+        run: |
+          RUN_DATE=$(python -c "from datetime import date; print(date.today().isoformat())" 2>/dev/null || echo "unknown")
+          if [ -n "${{ github.event.inputs.run_date }}" ]; then
+            RUN_DATE="${{ github.event.inputs.run_date }}"
+          fi
+
+          REPORT_PATH="reports/daily/${RUN_DATE}.md"
+
+          echo "## AI Companion Signal Intelligence — Run Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| Run date | \`${RUN_DATE}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Trigger | \`${{ github.event_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dry run | \`${{ github.event.inputs.dry_run || 'false' }}\` |" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f "$REPORT_PATH" ]; then
+            echo "| Report | \`${REPORT_PATH}\` ✅ |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Report Preview" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            head -60 "$REPORT_PATH" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Report | ❌ Not found at \`${REPORT_PATH}\` |" >> $GITHUB_STEP_SUMMARY
+          fi
