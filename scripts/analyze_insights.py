@@ -341,32 +341,3 @@ def analyze_insights(clean_data: dict, config: dict, run_date: str) -> dict[str,
     result["sample_size"] = sample_size
 
     return result
-_output_schema
-    """
-    sample_size = clean_data["sample_size"]
-    analysis_goal = _infer_analysis_goal(sample_size)
-
-    # Select methods for this run
-    methods = select_methods(sample_size, analysis_goal, config)
-    print(f"        Methods selected: {', '.join(methods)}")
-
-    # Load previous insight IDs for trend tracking
-    previous_ids = _load_previous_insight_ids(config)
-    if previous_ids:
-        print(f"        Previous insight IDs loaded: {len(previous_ids)}")
-    else:
-        print(f"        No previous reports found — first run baseline.")
-
-    # Assemble prompt
-    prompt = _assemble_prompt(clean_data, config, run_date, methods, previous_ids)
-
-    # Call LLM
-    print(f"        Calling OpenAI API (gpt-4o)...")
-    raw_response = _call_llm(prompt)
-
-    # Parse and verify
-    result = _parse_response(raw_response, run_date)
-    result["method_used"] = methods
-    result["sample_size"] = sample_size
-
-    return result
