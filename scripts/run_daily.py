@@ -5,7 +5,7 @@ Called by GitHub Actions on schedule, or run locally:
     python scripts/run_daily.py
 
 Orchestrates the full pipeline:
-    collect → clean → analyze → save report
+    collect → clean → analyze → save report → send email
 """
 
 import sys
@@ -22,6 +22,7 @@ from scripts.collect_reddit import collect_posts
 from scripts.clean_data import clean_posts
 from scripts.analyze_insights import analyze_insights
 from scripts.save_report import save_report
+from scripts.send_email import send_report_email
 
 import yaml
 
@@ -123,7 +124,7 @@ def main():
         sys.exit(1)
 
     # ── 5. Save report ────────────────────────────────────────────
-    print("\n[5/5] Saving report...")
+    print("\n[5/6] Saving report...")
     try:
         output_paths = save_report(analysis_result, clean_data, config, run_date)
         print(f"      Markdown : {output_paths['markdown']}")
@@ -136,11 +137,4 @@ def main():
         traceback.print_exc()
         sys.exit(1)
 
-    elapsed = round(time.time() - start_time, 1)
-    print(f"\n{'='*60}")
-    print(f"  Run complete in {elapsed}s")
-    print(f"{'='*60}\n")
-
-
-if __name__ == "__main__":
-    main()
+    # ── 6. Send email ──────────────────────────────�

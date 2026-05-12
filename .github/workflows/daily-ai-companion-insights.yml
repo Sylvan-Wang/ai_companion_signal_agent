@@ -105,6 +105,10 @@ jobs:
           REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
           REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
           REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
+          # Phase 4 — email delivery (optional; agent skips gracefully if not set)
+          REPORT_EMAIL_TO: ${{ secrets.REPORT_EMAIL_TO }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
 
       # ── 6. Commit report back to repo ─────────────────────────────────────────
       - name: Commit generated report
@@ -168,9 +172,4 @@ jobs:
             echo "| Report | \`${REPORT_PATH}\` ✅ |" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "### Report Preview" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            head -60 "$REPORT_PATH" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Report | ❌ Not found at \`${REPORT_PATH}\` |" >> $GITHUB_STEP_SUMMARY
-          fi
+            echo '```' >> $GITH
