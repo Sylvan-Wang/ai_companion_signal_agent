@@ -1,7 +1,8 @@
 # ── Secrets & environment ─────────────────────────────────────────────────────
 .env
 .env.*
-!.env.example        # allow a template file with no real values
+# Allow the example template (no real keys inside)
+!.env.example
 
 # ── Python ────────────────────────────────────────────────────────────────────
 __pycache__/

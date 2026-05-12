@@ -122,4 +122,25 @@ def main():
         traceback.print_exc()
         sys.exit(1)
 
-    # ── 5. Save report ──────────────────────────────
+    # ── 5. Save report ────────────────────────────────────────────
+    print("\n[5/5] Saving report...")
+    try:
+        output_paths = save_report(analysis_result, clean_data, config, run_date)
+        print(f"      Markdown : {output_paths['markdown']}")
+        if output_paths.get("json"):
+            print(f"      JSON     : {output_paths['json']}")
+        if output_paths.get("quotes"):
+            print(f"      Quotes   : {output_paths['quotes']}")
+    except Exception as e:
+        print(f"      ERROR saving report: {e}")
+        traceback.print_exc()
+        sys.exit(1)
+
+    elapsed = round(time.time() - start_time, 1)
+    print(f"\n{'='*60}")
+    print(f"  Run complete in {elapsed}s")
+    print(f"{'='*60}\n")
+
+
+if __name__ == "__main__":
+    main()
