@@ -137,4 +137,19 @@ def main():
         traceback.print_exc()
         sys.exit(1)
 
-    # ── 6. Send email ──────────────────────────────�
+    # ── 6. Send email ─────────────────────────────────────────────
+    print("\n[6/6] Sending email report...")
+    try:
+        send_report_email(output_paths["markdown"], run_date)
+    except Exception as e:
+        # Email is non-fatal — log and continue
+        print(f"      Email error (non-fatal): {e}")
+
+    elapsed = round(time.time() - start_time, 1)
+    print(f"\n{'='*60}")
+    print(f"  Run complete in {elapsed}s")
+    print(f"{'='*60}\n")
+
+
+if __name__ == "__main__":
+    main()

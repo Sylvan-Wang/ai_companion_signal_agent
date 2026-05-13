@@ -172,4 +172,9 @@ jobs:
             echo "| Report | \`${REPORT_PATH}\` ✅ |" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "### Report Preview" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITH
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            head -60 "$REPORT_PATH" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Report | ❌ Not found at \`${REPORT_PATH}\` |" >> $GITHUB_STEP_SUMMARY
+          fi
