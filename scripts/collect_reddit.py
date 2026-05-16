@@ -1,5 +1,5 @@
 """
-collect_reddit.py — Track-aware Reddit data collection with sample data fallback.
+collect_reddit.py — Track-aware Reddit data collection with public JSON fallback.
 
 Each collected post is tagged with:
   - market_track   : which of the 7 coverage tracks matched
@@ -8,8 +8,10 @@ Each collected post is tagged with:
   - subreddit      : the subreddit it came from
   - vulnerability_flag: True for emotional_need_adjacent content
 
-Phase 1 (no Reddit credentials): loads data/raw/sample_raw_posts.json
-Phase 3 (credentials in env):    fetches live data via PRAW per-track
+Mode selection (auto-detected):
+  Phase 3a — PRAW (REDDIT_CLIENT_ID etc. set):  live data via OAuth
+  Phase 3b — Public JSON (no credentials):       live data via reddit.com/*.json
+  Sample    — SIGNAL_AGENT_USE_SAMPLE=true:      loads sample_raw_posts.json
 
 Returns:
   {
@@ -26,19 +28,28 @@ Returns:
 import os
 import json
 import re
+import time
+import requests
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 
 
-# ─── Credential check ────────────────────────────────────────────────────────
+# ─── Mode detection ──────────────────────────────────────────────────────────
 
-def _is_live_mode() -> bool:
+def _is_praw_mode() -> bool:
+    """PRAW mode: all three Reddit OAuth credentials are present."""
     return all([
         os.getenv("REDDIT_CLIENT_ID"),
         os.getenv("REDDIT_CLIENT_SECRET"),
         os.getenv("REDDIT_USER_AGENT"),
     ])
+
+def _is_sample_mode() -> bool:
+    """Force sample data via env var (for testing)."""
+    return os.getenv("SIGNAL_AGENT_USE_SAMPLE", "").lower() == "true"
+
+# Public JSON mode is the default fallback — no credentials needed.
 
 
 # ─── Config helpers ───────────────────────────────────────────────────────────
@@ -161,7 +172,134 @@ def _load_sample_data(config: dict) -> dict[str, Any]:
     }
 
 
-# ─── Live Reddit collection ───────────────────────────────────────────────────
+# ─── Public JSON collection (no credentials needed) ──────────────────────────
+
+_PUBLIC_HEADERS = {
+    "User-Agent": "ai_companion_signal_agent/0.1 (research; github.com/Sylvan-Wang/ai_companion_signal_agent)"
+}
+_REQUEST_DELAY = 1.5  # seconds between requests — be respectful
+
+
+def _public_fetch(url: str, params: dict | None = None) -> dict | None:
+    """GET a reddit public JSON endpoint. Returns parsed JSON or None on error."""
+    try:
+        resp = requests.get(url, headers=_PUBLIC_HEADERS, params=params, timeout=15)
+        if resp.status_code == 429:
+            print(f"        Rate-limited by Reddit, waiting 10s...")
+            time.sleep(10)
+            resp = requests.get(url, headers=_PUBLIC_HEADERS, params=params, timeout=15)
+        resp.raise_for_status()
+        return resp.json()
+    except Exception as e:
+        print(f"        WARNING: request failed for {url}: {e}")
+        return None
+
+
+def _collect_public_json(config: dict) -> dict[str, Any]:
+    """
+    Collect posts using Reddit's public JSON API (no OAuth needed).
+    Hits: https://www.reddit.com/r/{sub}/new.json and /hot.json
+    """
+    collection_cfg = config.get("collection", {})
+    post_limit = min(collection_cfg.get("post_limit_per_run", 60), 100)
+    comment_limit = collection_cfg.get("comment_limit_per_post", 10)
+    lookback_window = collection_cfg.get("lookback_window", "24h")
+    lookback_hours = int(re.sub(r"[^\d]", "", str(lookback_window))) if lookback_window else 24
+
+    exclusions = _get_exclusion_keywords(config)
+    active_tracks = _get_active_tracks(config)
+
+    all_posts: list[dict] = []
+    seen_ids: set[str] = set()
+    track_coverage: dict[str, int] = {name: 0 for name in active_tracks}
+
+    for track_name, track_cfg in active_tracks.items():
+        subreddits = track_cfg.get("subreddits", [])
+        keywords = track_cfg.get("keywords", [])
+        vulnerability_flag = _is_vulnerable_track(track_name, track_cfg)
+
+        print(f"        [{track_name}] Fetching from {subreddits}...")
+
+        for subreddit_name in subreddits:
+            # Fetch from both /new and /hot to maximise coverage
+            for sort in ("new", "hot"):
+                url = f"https://www.reddit.com/r/{subreddit_name}/{sort}.json"
+                data = _public_fetch(url, params={"limit": post_limit, "raw_json": 1})
+                time.sleep(_REQUEST_DELAY)
+
+                if not data:
+                    continue
+
+                children = data.get("data", {}).get("children", [])
+                for child in children:
+                    p = child.get("data", {})
+                    post_id = p.get("id", "")
+
+                    if post_id in seen_ids or p.get("stickied"):
+                        continue
+
+                    combined_text = f"{p.get('title', '')} {p.get('selftext', '')}"
+                    matched_kw = _find_matched_keyword(combined_text, keywords)
+                    if not matched_kw:
+                        continue
+                    if _contains_excluded(combined_text, exclusions):
+                        continue
+
+                    created_utc = p.get("created_utc", 0)
+                    created_str = datetime.fromtimestamp(created_utc, tz=timezone.utc).isoformat()
+                    if not _within_lookback(created_str, lookback_hours):
+                        continue
+
+                    # Fetch comments via public API
+                    comments = []
+                    comments_url = f"https://www.reddit.com/r/{subreddit_name}/comments/{post_id}.json"
+                    cdata = _public_fetch(comments_url, params={"limit": comment_limit, "depth": 1, "raw_json": 1})
+                    time.sleep(_REQUEST_DELAY)
+
+                    if cdata and len(cdata) >= 2:
+                        comment_children = cdata[1].get("data", {}).get("children", [])
+                        for cc in comment_children[:comment_limit]:
+                            cd = cc.get("data", {})
+                            body = cd.get("body", "")
+                            if not body or body in ("[deleted]", "[removed]"):
+                                continue
+                            comments.append({
+                                "comment_id": cd.get("id", ""),
+                                "comment_body": body,
+                                "comment_score": cd.get("score", 0),
+                                "comment_created_utc": datetime.fromtimestamp(
+                                    cd.get("created_utc", 0), tz=timezone.utc
+                                ).isoformat(),
+                                "vulnerability_flag": vulnerability_flag,
+                            })
+
+                    all_posts.append({
+                        "post_id": post_id,
+                        "subreddit": subreddit_name,
+                        "market_track": track_name,
+                        "matched_keyword": matched_kw,
+                        "source": "reddit_public",
+                        "post_title": p.get("title", ""),
+                        "post_body": p.get("selftext", ""),
+                        "post_score": p.get("score", 0),
+                        "post_num_comments": p.get("num_comments", 0),
+                        "post_created_utc": created_str,
+                        "post_url": f"https://reddit.com{p.get('permalink', '')}",
+                        "vulnerability_flag": vulnerability_flag,
+                        "comments": comments,
+                    })
+                    seen_ids.add(post_id)
+                    track_coverage[track_name] = track_coverage.get(track_name, 0) + 1
+
+    missing_tracks = [t for t, count in track_coverage.items() if count == 0]
+    return {
+        "posts": all_posts,
+        "track_coverage": track_coverage,
+        "missing_tracks": missing_tracks,
+    }
+
+
+# ─── PRAW Live Reddit collection ─────────────────────────────────────────────
 
 def _collect_live(config: dict) -> dict[str, Any]:
     """Collect posts from Reddit via PRAW, organised by track."""
@@ -264,10 +402,15 @@ def _collect_live(config: dict) -> dict[str, Any]:
     }
 
 
-# Public entry point
+# ─── Public entry point ───────────────────────────────────────────────────────
+
 def collect_posts(config: dict) -> dict:
     """
-    Main collection function. Auto-selects live or sample mode.
+    Main collection function. Auto-selects collection mode:
+
+      1. PRAW mode      — REDDIT_CLIENT_ID + SECRET + USER_AGENT all set
+      2. Public JSON    — default; uses reddit.com/*.json (no credentials)
+      3. Sample mode    — SIGNAL_AGENT_USE_SAMPLE=true (local testing only)
 
     Returns:
         {
@@ -276,10 +419,14 @@ def collect_posts(config: dict) -> dict:
             "missing_tracks": [track_names_with_zero_posts]
         }
     """
-    if _is_live_mode():
-        print("      [live mode] Reddit credentials detected -- fetching live data")
-        return _collect_live(config)
-    else:
-        print("      [sample mode] No Reddit credentials -- using sample data")
-        print("      To use live data: set REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USER_AGENT")
+    if _is_sample_mode():
+        print("      [sample mode] SIGNAL_AGENT_USE_SAMPLE=true -- using sample data")
         return _load_sample_data(config)
+
+    if _is_praw_mode():
+        print("      [praw mode] Reddit OAuth credentials detected -- fetching via PRAW")
+        return _collect_live(config)
+
+    print("      [public JSON mode] No credentials -- fetching via reddit.com public API")
+    print("      (No API key required. Rate-limited to ~1 req/1.5s.)")
+    return _collect_public_json(config)
