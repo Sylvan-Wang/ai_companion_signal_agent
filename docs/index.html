@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Companion Signal Intelligence</title>
+  <meta name="description" content="Daily signals from the AI companion product frontier. Subscribe to receive automated market intelligence every morning.">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600&family=IM+Fell+English:ital@0;1&display=swap');
+
+    /* ── Tokens (shared with email) ── */
+    :root {
+      --parchment:   #e8e4dc;
+      --paper:       #faf8f3;
+      --paper-warm:  #f3f0e8;
+      --border:      #d8d0c4;
+      --border-soft: #e0d8cc;
+      --ink:         #1e1e1e;
+      --ink-mid:     #3a3632;
+      --ink-muted:   #5a5550;
+      --label:       #9a9080;
+      --label-light: #b0a898;
+      --accent:      #3a3a3a;
+      --serif:       'Noto Serif SC', 'SimSun', '宋体', Georgia, serif;
+      --serif-en:    'IM Fell English', 'Times New Roman', Georgia, serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--parchment);
+      font-family: var(--serif);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--paper);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-brand {
+      font-family: var(--serif-en);
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      color: var(--ink-mid);
+      text-transform: uppercase;
+    }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Times New Roman', serif;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--label);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink-mid); }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 88px 48px 72px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      font-family: 'Times New Roman', serif;
+      font-size: 9px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--label);
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.25;
+      margin-bottom: 20px;
+    }
+    .hero-sub {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 16px;
+      color: var(--ink-muted);
+      line-height: 1.75;
+      max-width: 540px;
+      margin: 0 auto 40px;
+    }
+    .hero-rule {
+      width: 48px;
+      height: 1px;
+      background: var(--border);
+      margin: 0 auto 40px;
+    }
+
+    /* ── Subscribe form ── */
+    .subscribe-wrap {
+      display: flex;
+      gap: 0;
+      max-width: 440px;
+      margin: 0 auto 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .subscribe-input {
+      flex: 1;
+      padding: 14px 18px;
+      border: 1px solid var(--border);
+      border-right: none;
+      background: var(--paper);
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--ink-mid);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .subscribe-input::placeholder { color: var(--label-light); }
+    .subscribe-input:focus { border-color: var(--accent); }
+    .subscribe-btn {
+      padding: 14px 24px;
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      color: var(--paper);
+      font-family: 'Times New Roman', serif;
+      font-size: 9.5px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .subscribe-btn:hover { background: #1e1e1e; border-color: #1e1e1e; }
+    .subscribe-note {
+      font-family: 'Times New Roman', serif;
+      font-style: italic;
+      font-size: 10px;
+      color: var(--label-light);
+      text-align: center;
+    }
+    .subscribe-success {
+      display: none;
+      text-align: center;
+      padding: 20px 0 8px;
+    }
+    .subscribe-success-icon { font-size: 18px; margin-bottom: 8px; }
+    .subscribe-success-text {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 14px;
+      color: var(--ink-mid);
+    }
+    .subscribe-success-sub {
+      font-family: 'Times New Roman', serif;
+      font-style: italic;
+      font-size: 10px;
+      color: var(--label);
+      margin-top: 4px;
+    }
+
+    /* ── What you get ── */
+    .what-section {
+      background: var(--paper);
+      border-top: 1px solid var(--border-soft);
+      border-bottom: 1px solid var(--border-soft);
+      padding: 64px 48px;
+    }
+    .section-inner {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    .section-eyebrow {
+      font-family: 'Times New Roman', serif;
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--label);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .section-eyebrow::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-soft);
+    }
+    .what-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 36px;
+    }
+    .what-item {}
+    .what-num {
+      font-family: 'Times New Roman', serif;
+      font-style: italic;
+      font-size: 28px;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .what-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .what-desc {
+      font-family: 'Times New Roman', serif;
+      font-style: italic;
+      font-size: 12px;
+      color: var(--label);
+      line-height: 1.7;
+    }
+
+    /* ── Sample report preview ── */
+    .preview-section {
+      padding: 72px 48px;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    .preview-card {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      position: relative;
+      overflow: hidden;
+    }
+    .preview-card::before {
+      content: '';
+      display: block;
+      height: 3px;
+      background: var(--accent);
+    }
+    .preview-header {
+      padding: 28px 36px 22px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .preview-eyebrow {
+      font-family: 'Times New Roman', serif;
+      font-size: 8.5px;
+      letter-spacing: 0.28em;
+      color: var(--label);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .preview-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .preview-stats {
+      display: flex;
+      padding: 12px 36px;
+      background: var(--paper-warm);
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .preview-stat {
+      flex: 1;
+      position: relative;
+    }
+    .preview-stat + .preview-stat::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 2px; bottom: 2px;
+      width: 1px;
+      background: var(--border);
+    }
+    .preview-stat + .preview-stat { padding-left: 20px; }
+    .preview-stat-num {
+      font-family: 'Times New Roman', serif;
+      font-style: italic;
+      font-size: 18px;
+      color: var(--ink-mid);
+      line-height: 1;
+    }
+    .preview-stat-label {
+      font-family: 'Times New Roman', serif;
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      color: var(--label-light);
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+    .preview-body { padding: 24px 36px 28px; }
+    .preview-insight {
+      display: grid;
+      grid-template-columns: 72px 1fr 8px;
+      gap: 16px;
+      align-items: start;
+      padding: 12px 0;
+      border-bottom: 1px solid #ede8de;
+    }
+    .preview-insight:last-child { border-bottom: none; padding-bottom: 0; }
+    .preview-tag {
+      font-family: 'Times New Roman', serif;
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--label-light);
+      line-height: 1.7;
+      padding-top: 2px;
+    }
+    .preview-insight-title {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--ink);
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+    .preview-insight-desc {
+      font-size: 11px;
+      color: var(--ink-muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+    .preview-pip {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+    .pip-high { background: #4a4a3a; }
+    .pip-med  { background: #9a9080; }
+    .preview-fade {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 80px;
+      background: linear-gradient(transparent, var(--paper));
+      pointer-events: none;
+    }
+
+    /* ── CTA bottom ── */
+    .cta-section {
+      background: var(--paper);
+      border-top: 1px solid var(--border-soft);
+      padding: 72px 48px;
+      text-align: center;
+    }
+    .cta-title {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .cta-sub {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--label);
+      margin-bottom: 32px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 28px 48px;
+      border-top: 1px solid var(--border-soft);
+      background: var(--paper-warm);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-sig {
+      font-family: 'Times New Roman', serif;
+      font-style: italic;
+      font-size: 12px;
+      color: var(--label);
+    }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+    .footer-links a {
+      font-family: 'Times New Roman', serif;
+      font-size: 9.5px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--label);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--ink-mid); }
+
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .hero { padding: 56px 24px 48px; }
+      .what-section, .preview-section, .cta-section { padding: 48px 24px; }
+      .preview-header, .preview-stats, .preview-body { padding-left: 20px; padding-right: 20px; }
+      footer { padding: 24px 20px; flex-direction: column; text-align: center; }
+      .subscribe-wrap { flex-direction: column; }
+      .subscribe-input { border-right: 1px solid var(--border); border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Nav ── -->
+  <nav>
+    <span class="nav-brand">&#128225; AI Companion Signal</span>
+    <ul class="nav-links">
+      <li><a href="#preview">Sample</a></li>
+      <li><a href="https://github.com/Sylvan-Wang/ai_companion_signal_agent">GitHub</a></li>
+      <li><a href="mailto:zichenwang209@gmail.com">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-eyebrow">Daily Signal Intelligence &#183; AI Companion Frontier</div>
+    <h1 class="hero-title">
+      What are real users saying<br>about AI companions today?
+    </h1>
+    <p class="hero-sub">
+      An automated pipeline that monitors Reddit communities, extracts signal from noise,
+      and delivers a concise daily report &#8212; emotional needs, adoption barriers,
+      trust concerns, and product opportunities.
+    </p>
+    <div class="hero-rule"></div>
+
+    <!-- Subscribe form -->
+    <div id="subscribe-area">
+      <div class="subscribe-wrap">
+        <input
+          type="email"
+          id="email-input"
+          class="subscribe-input"
+          placeholder="your@email.com"
+          autocomplete="email"
+        />
+        <button class="subscribe-btn" onclick="handleSubscribe()">
+          Subscribe &#8594;
+        </button>
+      </div>
+      <p class="subscribe-note">
+        Free &nbsp;&#183;&nbsp; Every morning &nbsp;&#183;&nbsp; Unsubscribe anytime
+      </p>
+    </div>
+    <div class="subscribe-success" id="subscribe-success">
+      <div class="subscribe-success-icon">&#10022;</div>
+      <div class="subscribe-success-text">You&#8217;re on the list.</div>
+      <div class="subscribe-success-sub">First report arrives tomorrow morning.</div>
+    </div>
+  </section>
+
+  <!-- ── What you get ── -->
+  <section class="what-section">
+    <div class="section-inner">
+      <div class="section-eyebrow">What&#8217;s inside each report</div>
+      <div class="what-grid">
+        <div class="what-item">
+          <div class="what-num">01</div>
+          <div class="what-title">New Signals</div>
+          <div class="what-desc">Fresh patterns emerging from community discussion, not seen in prior reports.</div>
+        </div>
+        <div class="what-item">
+          <div class="what-num">02</div>
+          <div class="what-title">Track Coverage</div>
+          <div class="what-desc">7 market tracks: companion apps, physical devices, wearables, ambient hardware, and more.</div>
+        </div>
+        <div class="what-item">
+          <div class="what-num">03</div>
+          <div class="what-title">Voice of the Day</div>
+          <div class="what-desc">The single most representative user quote &#8212; unfiltered, direct from the community.</div>
+        </div>
+        <div class="what-item">
+          <div class="what-num">04</div>
+          <div class="what-title">Watchlist</div>
+          <div class="what-desc">Signals that have appeared multiple days in a row and may indicate an emerging trend.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Preview ── -->
+  <section class="preview-section" id="preview">
+    <div class="section-eyebrow">Sample report</div>
+
+    <div class="preview-card">
+      <div class="preview-header">
+        <div class="preview-eyebrow">AI Companion Signal Intelligence &#183; Daily Brief</div>
+        <div class="preview-title">&#128225; Friday&#8217;s Signal Report</div>
+      </div>
+      <div class="preview-stats">
+        <div class="preview-stat">
+          <div class="preview-stat-num">312</div>
+          <div class="preview-stat-label">Posts Scanned</div>
+        </div>
+        <div class="preview-stat">
+          <div class="preview-stat-num">4</div>
+          <div class="preview-stat-label">New Signals</div>
+        </div>
+        <div class="preview-stat">
+          <div class="preview-stat-num">2</div>
+          <div class="preview-stat-label">Updated</div>
+        </div>
+        <div class="preview-stat">
+          <div class="preview-stat-num">1</div>
+          <div class="preview-stat-label">Watchlist</div>
+        </div>
+      </div>
+      <div class="preview-body">
+        <div class="preview-insight">
+          <div class="preview-tag">Adoption<br>Barrier</div>
+          <div>
+            <div class="preview-insight-title">Users want presence, not performance</div>
+            <div class="preview-insight-desc">Multiple users distinguish &#8220;always-on assistant&#8221; from &#8220;quiet ambient presence.&#8221; The need is environmental, not interactive.</div>
+          </div>
+          <div class="preview-pip pip-high"></div>
+        </div>
+        <div class="preview-insight">
+          <div class="preview-tag">Trust /<br>Privacy</div>
+          <div>
+            <div class="preview-insight-title">Microphone anxiety is the hardest barrier</div>
+            <div class="preview-insight-desc">Concerns focus on mic and camera, not AI itself. A &#8220;less smart but non-listening&#8221; device scores higher acceptance.</div>
+          </div>
+          <div class="preview-pip pip-high"></div>
+        </div>
+        <div class="preview-insight">
+          <div class="preview-tag">Social<br>Acceptance</div>
+          <div>
+            <div class="preview-insight-title">&#8220;What will people think?&#8221; is the soft ceiling</div>
+            <div class="preview-insight-desc">For users considering purchase, the deciding factor is social perception &#8212; not price or features.</div>
+          </div>
+          <div class="preview-pip pip-med"></div>
+        </div>
+      </div>
+      <div class="preview-fade"></div>
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <section class="cta-section">
+    <div class="cta-title">Start receiving daily signals.</div>
+    <div class="cta-sub">Free. Every morning. No spam.</div>
+    <div id="subscribe-area-2">
+      <div class="subscribe-wrap" style="margin-bottom:12px;">
+        <input
+          type="email"
+          id="email-input-2"
+          class="subscribe-input"
+          placeholder="your@email.com"
+          autocomplete="email"
+        />
+        <button class="subscribe-btn" onclick="handleSubscribe2()">
+          Subscribe &#8594;
+        </button>
+      </div>
+      <p class="subscribe-note">
+        Built by
+        <a href="mailto:zichenwang209@gmail.com"
+           style="color:var(--ink-mid);text-decoration:none;border-bottom:1px solid var(--border);">
+          Sylvan Wang
+        </a>
+        &#183; Open source on
+        <a href="https://github.com/Sylvan-Wang/ai_companion_signal_agent"
+           style="color:var(--ink-mid);text-decoration:none;border-bottom:1px solid var(--border);">
+          GitHub
+        </a>
+      </p>
+    </div>
+    <div class="subscribe-success" id="subscribe-success-2">
+      <div class="subscribe-success-icon">&#10022;</div>
+      <div class="subscribe-success-text">You&#8217;re on the list.</div>
+      <div class="subscribe-success-sub">First report arrives tomorrow morning.</div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <span class="footer-sig">ai companion signal agent &#183; automated daily brief</span>
+    <ul class="footer-links">
+      <li><a href="https://github.com/Sylvan-Wang/ai_companion_signal_agent">GitHub</a></li>
+      <li><a href="mailto:zichenwang209@gmail.com">Contact</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    // Wire up to Formspree if FORMSPREE_ID is injected; otherwise mailto fallback
+    const FORMSPREE_ID = ""; // Replace with your Formspree form ID, e.g. "xpwzabcd"
+
+    function submitEmail(email, successId, areaId) {
+      if (!email || !email.includes("@")) return false;
+
+      if (FORMSPREE_ID) {
+        fetch("https://formspree.io/f/" + FORMSPREE_ID, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({ email: email })
+        })
+        .then(r => r.json())
+        .then(() => showSuccess(successId, areaId))
+        .catch(() => showSuccess(successId, areaId)); // show success anyway
+      } else {
+        // Mailto fallback
+        window.location.href =
+          "mailto:zichenwang209@gmail.com?subject=Subscribe%20to%20AI%20Companion%20Signal&body=Please%20add%20me%3A%20" + encodeURIComponent(email);
+        showSuccess(successId, areaId);
+      }
+      return true;
+    }
+
+    function showSuccess(successId, areaId) {
+      document.getElementById(areaId).style.display = "none";
+      document.getElementById(successId).style.display = "block";
+    }
+
+    function handleSubscribe() {
+      const email = document.getElementById("email-input").value.trim();
+      if (!submitEmail(email, "subscribe-success", "subscribe-area")) {
+        document.getElementById("email-input").focus();
+      }
+    }
+
+    function handleSubscribe2() {
+      const email = document.getElementById("email-input-2").value.trim();
+      if (!submitEmail(email, "subscribe-success-2", "subscribe-area-2")) {
+        document.getElementById("email-input-2").focus();
+      }
+    }
+
+    ["email-input", "email-input-2"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("keydown", e => {
+        if (e.key === "Enter") el.id === "email-input" ? handleSubscribe() : handleSubscribe2();
+      });
+    });
+  </script>
+</body>
+</html>

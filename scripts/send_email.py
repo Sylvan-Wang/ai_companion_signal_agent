@@ -263,37 +263,7 @@ def _build_email(report_md: str, run_date: str) -> tuple[str, str, str]:
         </div>
       </div>"""
 
-    # Formspree form ID (optional -- shows static subscribe info if not set)
-    formspree_id = os.getenv("FORMSPREE_ID", "").strip()
-    if formspree_id:
-        subscribe_form_html = f"""
-    <form action="https://formspree.io/f/{formspree_id}" method="POST"
-          style="display:flex;gap:0;margin-bottom:10px;">
-      <input type="email" name="email" required
-             placeholder="your@email.com"
-             style="flex:1;padding:10px 14px;border:1px solid #c8c0b4;border-right:none;
-                    background:#fff;font-family:'Times New Roman',serif;font-style:italic;
-                    font-size:12px;color:#3a3632;outline:none;" />
-      <button type="submit"
-              style="padding:10px 20px;background:#3a3a3a;border:1px solid #3a3a3a;
-                     color:#faf8f3;font-family:'Times New Roman',serif;font-size:9.5px;
-                     letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;">
-        Subscribe &#8594;
-      </button>
-    </form>
-    <p style="font-family:'Times New Roman',serif;font-style:italic;font-size:9px;
-              color:#c8c0b4;">Free. Unsubscribe anytime. No spam, no tracking.</p>"""
-    else:
-        subscribe_form_html = f"""
-    <p style="font-family:'Times New Roman',serif;font-style:italic;font-size:12px;
-              color:#6a6258;margin-bottom:6px;">
-      To subscribe, email
-      <a href="mailto:zichenwang209@gmail.com?subject=Subscribe to AI Companion Signal"
-         style="color:#3a3632;border-bottom:1px solid #d8d0c4;text-decoration:none;">
-        zichenwang209@gmail.com
-      </a>
-      with subject line &#8220;Subscribe&#8221;.
-    </p>"""
+    landing_page_url = "https://sylvan-wang.github.io/ai_companion_signal_agent/"
 
     html = f"""<!DOCTYPE html>
 <html lang="zh">
@@ -392,21 +362,24 @@ def _build_email(report_md: str, run_date: str) -> tuple[str, str, str]:
                     letter-spacing:0.18em; text-transform:uppercase; color:#6a6258;
                     text-decoration:none; padding:6px 14px; border:1px solid #c8c0b4; }}
 
-    /* Subscribe card */
-    .subscribe-card {{ margin-top:24px; background:#faf8f3; border:1px solid #d8d0c4;
-                       box-shadow:0 2px 8px rgba(0,0,0,0.05);
-                       padding:32px 48px 28px; position:relative; }}
-    .subscribe-card::before {{ content:''; display:block; position:absolute;
-                                top:0; left:0; right:0; height:2px;
-                                background:repeating-linear-gradient(
-                                  90deg,#3a3a3a 0px,#3a3a3a 4px,
-                                  transparent 4px,transparent 8px); }}
-    .subscribe-label {{ font-family:'Times New Roman',serif; font-size:9px;
-                        letter-spacing:0.28em; text-transform:uppercase;
-                        color:#9a9080; margin-bottom:10px; }}
-    .subscribe-title {{ font-size:17px; font-weight:500; color:#1e1e1e; margin-bottom:6px; }}
-    .subscribe-desc {{ font-family:'Times New Roman',serif; font-style:italic;
-                       font-size:11.5px; color:#9a9080; line-height:1.7; margin-bottom:20px; }}
+    /* Share card */
+    .share-card {{ margin-top:24px; background:#faf8f3; border:1px solid #d8d0c4;
+                   box-shadow:0 2px 8px rgba(0,0,0,0.05);
+                   padding:32px 48px 28px; position:relative; }}
+    .share-card::before {{ content:''; display:block; position:absolute;
+                           top:0; left:0; right:0; height:2px;
+                           background:repeating-linear-gradient(
+                             90deg,#3a3a3a 0px,#3a3a3a 4px,
+                             transparent 4px,transparent 8px); }}
+    .share-label {{ font-family:'Times New Roman',serif; font-size:9px;
+                    letter-spacing:0.28em; text-transform:uppercase;
+                    color:#9a9080; margin-bottom:10px; }}
+    .share-title {{ font-size:17px; font-weight:500; color:#1e1e1e; margin-bottom:6px; }}
+    .share-desc {{ font-family:'Times New Roman',serif; font-style:italic;
+                   font-size:11.5px; color:#9a9080; line-height:1.7; margin-bottom:16px; }}
+    .share-link {{ display:inline-block; font-family:'Times New Roman',serif;
+                   font-size:11px; color:#3a3632; text-decoration:none;
+                   border-bottom:1px solid #d8d0c4; padding-bottom:1px; }}
     .contact-line {{ margin-top:20px; padding-top:16px; border-top:1px solid #e0d8cc;
                      display:flex; align-items:center; gap:8px; }}
     .contact-name {{ font-size:11px; color:#6a6258; letter-spacing:0.04em; }}
@@ -474,15 +447,16 @@ def _build_email(report_md: str, run_date: str) -> tuple[str, str, str]:
     </div>
   </div>
 
-  <div class="subscribe-card">
-    <div class="subscribe-label">Subscribe &#183; Daily Signal Brief</div>
-    <div class="subscribe-title">One report. Every morning. In your inbox.</div>
-    <div class="subscribe-desc">
-      Automated tracking of AI companion product signals &#8212; emotional needs,
-      adoption barriers, trust concerns, and market opportunities.<br>
-      Daily. Under 5 minutes.
+  <div class="share-card">
+    <div class="share-label">Share &#183; Forward this report</div>
+    <div class="share-title">Know someone tracking the AI companion space?</div>
+    <div class="share-desc">
+      Forward this report &#8212; or send them the subscription link below.
+      New subscribers can sign up and receive tomorrow&#8217;s report.
     </div>
-    {subscribe_form_html}
+    <a class="share-link" href="{landing_page_url}">
+      &#128279;&nbsp; {landing_page_url}
+    </a>
     <div class="contact-line">
       <span class="contact-name">Sylvan Wang</span>
       <span class="contact-divider">&#183;</span>
