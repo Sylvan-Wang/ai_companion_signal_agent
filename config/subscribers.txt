@@ -1,0 +1,10 @@
+# AI Companion Signal Agent -- Subscriber List
+# One email address per line. Lines starting with # are comments.
+# This file is managed manually. Add new subscribers here.
+#
+# To enable the live subscription form, set the FORMSPREE_ID env var
+# (or GitHub Secret) to your Formspree form ID.
+#
+# Example:
+# alice@example.com
+# bob@company.com

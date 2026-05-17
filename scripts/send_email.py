@@ -1,314 +1,537 @@
 """
-send_email.py — Daily report email delivery for the AI Companion Signal Agent.
+send_email.py -- Daily report email delivery for the AI Companion Signal Agent.
 
-Reads the generated markdown report, converts it to a clean HTML email,
-and sends via Gmail SMTP (or any SMTP provider).
+Recipient sources (merged automatically):
+  1. REPORT_EMAIL_TO env var -- comma-separated addresses (GitHub Secret)
+  2. config/subscribers.txt  -- one address per line, managed separately
 
-Required environment variables (set in .env for local, GitHub Secrets for CI):
-    REPORT_EMAIL_TO      — recipient address (your email)
-    SMTP_USER            — sender Gmail address
-    SMTP_PASSWORD        — Gmail App Password (not your regular password)
-                           Create one at: myaccount.google.com/apppasswords
+New subscriptions can be collected via the HTML subscription form
+(wired to Formspree or any form backend -- see config/subscribers.txt).
+
+Required env vars:
+    SMTP_USER         -- sender Gmail address
+    SMTP_PASSWORD     -- Gmail App Password (myaccount.google.com/apppasswords)
 
 Optional:
-    SMTP_HOST            — default: smtp.gmail.com
-    SMTP_PORT            — default: 587
-    REPORT_EMAIL_FROM    — display name + address, defaults to SMTP_USER
-
-Gracefully skips (no error) if email config is missing — so the pipeline
-still works without email configured.
+    REPORT_EMAIL_TO   -- additional recipients (comma-separated)
+    SMTP_HOST         -- default: smtp.gmail.com
+    SMTP_PORT         -- default: 587
+    REPORT_EMAIL_FROM -- display name/address (defaults to SMTP_USER)
+    FORMSPREE_ID      -- your Formspree form ID (enables live subscription form)
 """
 
 import os
 import re
 import smtplib
 import textwrap
-from datetime import datetime, timezone
+from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
 
 
-# ─── Config ────────────────────────────────────────────────────────────────────
+# ---- Subscriber list ---------------------------------------------------------
+
+_SUBSCRIBERS_FILE = Path(__file__).parent.parent / "config" / "subscribers.txt"
+
+
+def _load_subscribers() -> list[str]:
+    """
+    Load the persistent subscriber list from config/subscribers.txt.
+    Each non-blank, non-comment line is treated as an email address.
+    """
+    if not _SUBSCRIBERS_FILE.exists():
+        return []
+    lines = _SUBSCRIBERS_FILE.read_text(encoding="utf-8").splitlines()
+    return [
+        ln.strip() for ln in lines
+        if ln.strip() and not ln.strip().startswith("#")
+    ]
+
+
+def _all_recipients() -> list[str]:
+    """Merge recipients from env var and subscribers.txt, deduplicating."""
+    from_env = [
+        a.strip()
+        for a in os.getenv("REPORT_EMAIL_TO", "").split(",")
+        if a.strip()
+    ]
+    from_file = _load_subscribers()
+    seen: set[str] = set()
+    merged: list[str] = []
+    for addr in from_env + from_file:
+        key = addr.lower()
+        if key not in seen:
+            seen.add(key)
+            merged.append(addr)
+    return merged
+
+
+# ---- Config ------------------------------------------------------------------
 
 def _email_config() -> dict | None:
-    """
-    Read email config from environment. Returns None if not configured.
-
-    REPORT_EMAIL_TO supports multiple recipients, comma-separated:
-        REPORT_EMAIL_TO=alice@gmail.com,bob@company.com,carol@example.org
-    """
-    to_raw = os.getenv("REPORT_EMAIL_TO", "").strip()
+    """Read SMTP config from environment. Returns None if not configured."""
     smtp_user = os.getenv("SMTP_USER", "").strip()
     smtp_pass = os.getenv("SMTP_PASSWORD", "").strip()
-
-    if not (to_raw and smtp_user and smtp_pass):
+    if not (smtp_user and smtp_pass):
         return None
 
-    # Parse comma-separated recipient list, strip whitespace from each
-    recipients = [addr.strip() for addr in to_raw.split(",") if addr.strip()]
+    recipients = _all_recipients()
+    if not recipients:
+        return None
 
     return {
-        "to_list": recipients,           # list of all recipients
-        "to_header": ", ".join(recipients),  # for the To: header
-        "from": os.getenv("REPORT_EMAIL_FROM", smtp_user).strip(),
-        "smtp_host": os.getenv("SMTP_HOST", "smtp.gmail.com"),
-        "smtp_port": int(os.getenv("SMTP_PORT", "587")),
-        "smtp_user": smtp_user,
+        "to_list":    recipients,
+        "to_header":  ", ".join(recipients),
+        "from":       os.getenv("REPORT_EMAIL_FROM", smtp_user).strip(),
+        "smtp_host":  os.getenv("SMTP_HOST", "smtp.gmail.com"),
+        "smtp_port":  int(os.getenv("SMTP_PORT", "587")),
+        "smtp_user":  smtp_user,
         "smtp_password": smtp_pass,
     }
 
 
-# ─── Markdown → HTML ───────────────────────────────────────────────────────────
+# ---- Markdown parsing --------------------------------------------------------
 
-def _md_to_html(md: str) -> str:
-    """
-    Lightweight markdown → HTML converter (no external deps).
-    Handles: headings, bold, bullet lists, horizontal rules, blockquotes, code.
-    """
-    lines = md.split("\n")
-    html_lines = []
-    in_list = False
+def _parse_stats(md: str) -> dict:
+    """Extract run stats from the markdown summary section."""
+    def find(pattern: str) -> str:
+        m = re.search(pattern, md, re.IGNORECASE)
+        return m.group(1) if m else "—"
 
-    for line in lines:
-        # Horizontal rule
-        if re.match(r"^---+$", line.strip()):
-            if in_list:
-                html_lines.append("</ul>")
-                in_list = False
-            html_lines.append('<hr style="border:none;border-top:1px solid #e0e0e0;margin:20px 0;">')
+    return {
+        "posts":     find(r"sample size[^\d]*(\d+)"),
+        "new":       find(r"new insights?[^\d]*(\d+)"),
+        "updated":   find(r"updated insights?[^\d]*(\d+)"),
+        "watchlist": find(r"watchlist signals?[^\d]*(\d+)"),
+    }
+
+
+def _parse_insights(md: str, max_insights: int = 5) -> list[dict]:
+    """Split markdown on ### headings and extract structured insight cards."""
+    # Any opening/closing curly or straight quote
+    OPEN_Q  = r'[“„‟"]'
+    CLOSE_Q = r'[”„‟"]'
+    DASH    = r'[-–—]'
+
+    blocks = re.split(r"\n(?=###\s)", md)
+    insights: list[dict] = []
+
+    for block in blocks:
+        if not block.startswith("###"):
             continue
 
-        # Headings
-        m = re.match(r"^(#{1,3})\s+(.+)$", line)
-        if m:
-            if in_list:
-                html_lines.append("</ul>")
-                in_list = False
-            level = len(m.group(1))
-            text = _inline(m.group(2))
-            sizes = {1: "22px", 2: "18px", 3: "15px"}
-            margins = {1: "28px 0 8px", 2: "22px 0 6px", 3: "16px 0 4px"}
-            html_lines.append(
-                f'<h{level} style="font-size:{sizes[level]};margin:{margins[level]};'
-                f'color:#1a1a1a;font-family:sans-serif;">{text}</h{level}>'
-            )
-            continue
+        lines = block.strip().splitlines()
+        title = re.sub(r"^###\s*", "", lines[0]).strip()
+        body  = "\n".join(lines[1:])
 
-        # Blockquote
-        if line.startswith("> "):
-            if in_list:
-                html_lines.append("</ul>")
-                in_list = False
-            text = _inline(line[2:])
-            html_lines.append(
-                f'<blockquote style="border-left:4px solid #f0a500;margin:8px 0;padding:6px 14px;'
-                f'background:#fffbf0;color:#555;font-style:italic;">{text}</blockquote>'
-            )
-            continue
+        # Signal strength
+        sm = re.search(r"\*\*signal.strength\*\*[:\s]+(\w+)", body, re.IGNORECASE)
+        raw = sm.group(1).lower() if sm else "medium"
+        pip = "high" if raw == "high" else ("med" if raw == "medium" else "low")
 
-        # Bullet list items
-        m = re.match(r"^[-*]\s+(.+)$", line)
-        if m:
-            if not in_list:
-                html_lines.append('<ul style="margin:6px 0 6px 20px;padding:0;">')
-                in_list = True
-            text = _inline(m.group(1))
-            html_lines.append(
-                f'<li style="margin:3px 0;color:#333;font-size:14px;">{text}</li>'
-            )
-            continue
+        # Category tag (first two words, newline-separated for narrow column)
+        cm = re.search(r"\*\*(category|track)[^*]*\*\*\s*(.+)", body, re.IGNORECASE)
+        if cm:
+            words = cm.group(2).strip().replace("_", " ").split()
+            category_tag = "<br>".join(filter(None, [
+                " ".join(words[:2]),
+                " ".join(words[2:4]),
+            ]))
+        else:
+            category_tag = "Signal"
 
-        # Close list if needed
-        if in_list:
-            html_lines.append("</ul>")
-            in_list = False
+        # First descriptive paragraph
+        desc = ""
+        for ln in lines[1:]:
+            ln = ln.strip()
+            if ln and not ln.startswith(("**", ">", "#", "-", "*")):
+                desc = ln
+                break
 
-        # Empty line → spacer
-        if not line.strip():
-            html_lines.append('<div style="height:6px;"></div>')
-            continue
+        # First blockquote quote + attribution
+        qm  = re.search(OPEN_Q + r"(.+?)" + CLOSE_Q, body)
+        qm2 = re.search(r'>\s*"(.+?)"', body)
+        quote = (qm or qm2)
+        quote_text = quote.group(1).strip() if quote else ""
 
-        # Normal paragraph
-        html_lines.append(
-            f'<p style="margin:4px 0;color:#333;font-size:14px;line-height:1.6;">'
-            f'{_inline(line)}</p>'
-        )
+        dm = re.search(r">" + DASH + r"\s*(.+)$", body, re.MULTILINE)
+        quote_source = dm.group(1).strip() if dm else ""
 
-    if in_list:
-        html_lines.append("</ul>")
+        insights.append({
+            "title":        title,
+            "category_tag": category_tag,
+            "description":  desc,
+            "quote":        quote_text,
+            "quote_source": quote_source,
+            "pip":          pip,
+        })
 
-    return "\n".join(html_lines)
+        if len(insights) >= max_insights:
+            break
+
+    return insights
 
 
-def _inline(text: str) -> str:
-    """Handle inline markdown: **bold**, `code`, emoji pass-through."""
-    # Bold
-    text = re.sub(r"\*\*(.+?)\*\*", r'<strong>\1</strong>', text)
-    # Inline code
-    text = re.sub(r"`(.+?)`", r'<code style="background:#f4f4f4;padding:1px 5px;border-radius:3px;font-size:13px;">\1</code>', text)
-    return text
+def _parse_featured_quote(md: str) -> tuple[str, str]:
+    """Find the Voice of the Day featured quote."""
+    OPEN_Q  = r'[“„‟"]'
+    CLOSE_Q = r'[”„‟"]'
+    DASH    = r'[-–—]'
+
+    m = re.search(
+        r"voice of the day.+?\n+>\s*" + OPEN_Q + r"(.+?)" + CLOSE_Q + r".+?\n>\s*" + DASH + r"\s*(.+)",
+        md, re.IGNORECASE | re.DOTALL,
+    )
+    if m:
+        return m.group(1).strip(), m.group(2).strip()
+
+    # Fallback: first blockquote pair
+    bq = re.search(
+        r'>\s*"(.+?)"\s*\n>\s*' + DASH + r'\s*(.+)', md
+    )
+    if bq:
+        return bq.group(1).strip(), bq.group(2).strip()
+
+    return "", ""
 
 
-# ─── Email assembly ────────────────────────────────────────────────────────────
-
-def _build_email(report_md: str, run_date: str) -> tuple[str, str, str]:
-    """
-    Returns (subject, plain_text, html_body).
-    """
-    # Extract first few insight titles for subject line teaser
-    titles = re.findall(r"^###?\s+.+?:\s+(.+)$", report_md, re.MULTILINE)
-    teaser = " · ".join(titles[:2]) if titles else "AI Companion Signal Report"
-
-    subject = f"[Signal Agent] {run_date} — {teaser}"
-
-    # Plain text fallback (strip markdown)
-    plain = re.sub(r"#{1,3}\s+", "", report_md)
+def _plain_text(md: str) -> str:
+    plain = re.sub(r"#{1,3}\s+", "", md)
     plain = re.sub(r"\*\*(.+?)\*\*", r"\1", plain)
     plain = re.sub(r"`(.+?)`", r"\1", plain)
     plain = re.sub(r"^---+$", "---", plain, flags=re.MULTILINE)
-    plain = textwrap.shorten(plain, width=5000, placeholder="...[see full report on GitHub]")
+    return textwrap.shorten(plain, width=5000, placeholder="...[see full report on GitHub]")
 
-    # HTML body
-    body_html = _md_to_html(report_md)
 
-    # Weekday for the header greeting
+# ---- HTML rendering ----------------------------------------------------------
+
+def _render_insight_row(ins: dict) -> str:
+    quote_html = ""
+    if ins["quote"]:
+        quote_html = f"""
+              <div class="quote-block">
+                <div class="quote-text">"{ins['quote']}"</div>
+                <div class="quote-source">&#8212; {ins['quote_source']}</div>
+              </div>"""
+    return f"""
+          <div class="insight">
+            <div class="insight-tag">{ins['category_tag']}</div>
+            <div class="insight-body">
+              <div class="insight-title">{ins['title']}</div>
+              <div class="insight-desc">{ins['description']}</div>
+              {quote_html}
+            </div>
+            <div class="priority-pip {ins['pip']}"></div>
+          </div>"""
+
+
+def _build_email(report_md: str, run_date: str) -> tuple[str, str, str]:
+    """Returns (subject, plain_text, html_body)."""
+
+    stats    = _parse_stats(report_md)
+    insights = _parse_insights(report_md)
+    fq_text, fq_source = _parse_featured_quote(report_md)
+
+    teaser_titles = [i["title"] for i in insights[:2]]
+    teaser  = " - ".join(teaser_titles) if teaser_titles else "AI Companion Signal Report"
+    subject = f"[Signal Agent] {run_date} -- {teaser}"
+
     try:
         weekday = datetime.strptime(run_date, "%Y-%m-%d").strftime("%A")
     except Exception:
         weekday = "Daily"
 
-    html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Companion Signal Report · {run_date}</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-    body {{ background: #f0f2f5; font-family: 'Inter', Arial, sans-serif; }}
+    insight_rows_html = (
+        "".join(_render_insight_row(i) for i in insights)
+        if insights else
+        '<p style="color:#9a9080;font-style:italic;font-size:13px;">'
+        "No insights extracted -- view the full report on GitHub.</p>"
+    )
 
-    /* Markdown content styles */
-    .content h1 {{ font-size: 20px; font-weight: 700; color: #0f172a; margin: 28px 0 10px; }}
-    .content h2 {{ font-size: 17px; font-weight: 600; color: #1e293b; margin: 24px 0 8px;
-                   padding-bottom: 6px; border-bottom: 2px solid #e2e8f0; }}
-    .content h3 {{ font-size: 15px; font-weight: 600; color: #334155; margin: 18px 0 6px; }}
-    .content p  {{ font-size: 14px; color: #475569; line-height: 1.7; margin: 6px 0; }}
-    .content ul {{ margin: 8px 0 8px 20px; padding: 0; }}
-    .content li {{ font-size: 14px; color: #475569; line-height: 1.7; margin: 4px 0; }}
-    .content strong {{ color: #1e293b; font-weight: 600; }}
-    .content code {{ background: #f1f5f9; color: #0f172a; padding: 2px 6px;
-                     border-radius: 4px; font-size: 12px; font-family: monospace; }}
-    .content blockquote {{ border-left: 3px solid #6366f1; margin: 12px 0;
-                           padding: 10px 16px; background: #f8f7ff;
-                           border-radius: 0 6px 6px 0; color: #4f46e5;
-                           font-style: italic; font-size: 13px; }}
-    .content hr {{ border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }}
+    featured_html = ""
+    if fq_text:
+        featured_html = f"""
+      <div class="section">
+        <div class="section-header">
+          <div class="section-label">Today&#8217;s Most Representative Voice</div>
+          <div class="section-rule"></div>
+        </div>
+        <div class="featured-quote">
+          <div class="featured-quote-text">{fq_text}</div>
+          <div class="featured-quote-source">&#8212; {fq_source}</div>
+        </div>
+      </div>"""
+
+    # Formspree form ID (optional -- shows static subscribe info if not set)
+    formspree_id = os.getenv("FORMSPREE_ID", "").strip()
+    if formspree_id:
+        subscribe_form_html = f"""
+    <form action="https://formspree.io/f/{formspree_id}" method="POST"
+          style="display:flex;gap:0;margin-bottom:10px;">
+      <input type="email" name="email" required
+             placeholder="your@email.com"
+             style="flex:1;padding:10px 14px;border:1px solid #c8c0b4;border-right:none;
+                    background:#fff;font-family:'Times New Roman',serif;font-style:italic;
+                    font-size:12px;color:#3a3632;outline:none;" />
+      <button type="submit"
+              style="padding:10px 20px;background:#3a3a3a;border:1px solid #3a3a3a;
+                     color:#faf8f3;font-family:'Times New Roman',serif;font-size:9.5px;
+                     letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;">
+        Subscribe &#8594;
+      </button>
+    </form>
+    <p style="font-family:'Times New Roman',serif;font-style:italic;font-size:9px;
+              color:#c8c0b4;">Free. Unsubscribe anytime. No spam, no tracking.</p>"""
+    else:
+        subscribe_form_html = f"""
+    <p style="font-family:'Times New Roman',serif;font-style:italic;font-size:12px;
+              color:#6a6258;margin-bottom:6px;">
+      To subscribe, email
+      <a href="mailto:zichenwang209@gmail.com?subject=Subscribe to AI Companion Signal"
+         style="color:#3a3632;border-bottom:1px solid #d8d0c4;text-decoration:none;">
+        zichenwang209@gmail.com
+      </a>
+      with subject line &#8220;Subscribe&#8221;.
+    </p>"""
+
+    html = f"""<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Companion Signal Report &#183; {run_date}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600&family=IM+Fell+English:ital@0;1&display=swap');
+    * {{ margin:0; padding:0; box-sizing:border-box; }}
+    body {{ background:#e8e4dc; display:flex; justify-content:center;
+            padding:48px 20px 64px;
+            font-family:'Noto Serif SC','SimSun',serif;
+            color:#2c2c2c; min-height:100vh; }}
+    .page {{ width:640px; display:flex; flex-direction:column; gap:0; }}
+    .email-wrap {{ background:#faf8f3; border:1px solid #d8d0c4;
+                   box-shadow:0 2px 12px rgba(0,0,0,0.07); position:relative; }}
+    .email-wrap::before {{ content:''; display:block; height:3px; background:#3a3a3a; }}
+
+    /* Header */
+    .header {{ padding:36px 48px 28px; border-bottom:1px solid #e0d8cc; }}
+    .header-eyebrow {{ font-family:'Times New Roman',serif; font-size:9px;
+                       letter-spacing:0.28em; color:#9a9080; text-transform:uppercase;
+                       margin-bottom:16px; }}
+    .header-title {{ font-size:26px; font-weight:600; color:#1e1e1e;
+                     line-height:1.35; margin-bottom:10px; }}
+    .header-date {{ font-family:'Times New Roman',serif; font-style:italic;
+                    font-size:12px; color:#9a9080; }}
+
+    /* Stats */
+    .stats-strip {{ padding:14px 48px; background:#f3f0e8;
+                    border-bottom:1px solid #e0d8cc; display:flex; }}
+    .stat {{ display:flex; flex-direction:column; gap:3px; flex:1; position:relative; }}
+    .stat + .stat::before {{ content:''; position:absolute; left:0; top:4px; bottom:4px;
+                              width:1px; background:#d8d0c4; }}
+    .stat + .stat {{ padding-left:20px; }}
+    .stat-num {{ font-family:'Times New Roman',serif; font-size:20px;
+                 color:#3a3a3a; line-height:1; font-style:italic; }}
+    .stat-label {{ font-family:'Times New Roman',serif; font-size:9px;
+                   letter-spacing:0.18em; color:#b0a898; text-transform:uppercase; }}
+
+    /* Body */
+    .body {{ padding:36px 48px; }}
+    .section {{ margin-bottom:36px; }}
+    .section:last-child {{ margin-bottom:0; }}
+    .section-header {{ display:flex; align-items:center; gap:12px; margin-bottom:18px; }}
+    .section-label {{ font-family:'Times New Roman',serif; font-size:9px;
+                      letter-spacing:0.28em; text-transform:uppercase;
+                      color:#9a9080; white-space:nowrap; }}
+    .section-rule {{ flex:1; height:1px; background:#e0d8cc; }}
+
+    /* Insight row */
+    .insight {{ padding:15px 0; border-bottom:1px solid #ede8de;
+                display:grid; grid-template-columns:80px 1fr 10px;
+                gap:18px; align-items:start; }}
+    .insight:last-child {{ border-bottom:none; padding-bottom:0; }}
+    .insight-tag {{ font-family:'Times New Roman',serif; font-size:8.5px;
+                    letter-spacing:0.14em; text-transform:uppercase;
+                    color:#b0a898; line-height:1.7; padding-top:2px; }}
+    .insight-title {{ font-size:14.5px; font-weight:500; color:#1e1e1e;
+                      line-height:1.4; margin-bottom:6px; }}
+    .insight-desc {{ font-size:11.5px; color:#5a5550; line-height:1.8; font-weight:300; }}
+    .priority-pip {{ width:7px; height:7px; border-radius:50%;
+                     margin-top:5px; flex-shrink:0; }}
+    .high {{ background:#4a4a3a; }}
+    .med  {{ background:#9a9080; }}
+    .low  {{ background:transparent; border:1px solid #c8c0b4; }}
+
+    /* Quote */
+    .quote-block {{ margin:10px 0 4px; padding:10px 16px;
+                    border-left:2px solid #c8c0b4; background:#f3f0e8; }}
+    .quote-text {{ font-family:'Times New Roman',serif; font-style:italic;
+                   font-size:11px; color:#6a6258; line-height:1.75; }}
+    .quote-source {{ font-family:'Times New Roman',serif; font-style:italic;
+                     font-size:9px; color:#b0a898; margin-top:5px; }}
+
+    /* Featured quote */
+    .featured-quote {{ padding:20px 24px; border:1px solid #d8d0c4;
+                       background:#f3f0e8; position:relative; }}
+    .featured-quote::before {{ content:'\\201C'; font-family:'Times New Roman',serif;
+                                font-size:64px; color:#d8d0c4; position:absolute;
+                                top:2px; left:18px; line-height:1; }}
+    .featured-quote-text {{ font-family:'Times New Roman',serif; font-style:italic;
+                             font-size:13px; color:#3a3632; line-height:1.8;
+                             padding-left:28px; }}
+    .featured-quote-source {{ font-family:'Times New Roman',serif; font-style:italic;
+                               font-size:9.5px; color:#b0a898; margin-top:10px;
+                               padding-left:28px; letter-spacing:0.08em; }}
+
+    /* Footer */
+    .footer {{ padding:22px 48px; border-top:1px solid #e0d8cc; background:#f3f0e8;
+               display:flex; justify-content:space-between; align-items:center; }}
+    .footer-sig {{ font-family:'Times New Roman',serif; font-style:italic;
+                   font-size:12px; color:#b0a898; }}
+    .footer-link {{ font-family:'Times New Roman',serif; font-size:9.5px;
+                    letter-spacing:0.18em; text-transform:uppercase; color:#6a6258;
+                    text-decoration:none; padding:6px 14px; border:1px solid #c8c0b4; }}
+
+    /* Subscribe card */
+    .subscribe-card {{ margin-top:24px; background:#faf8f3; border:1px solid #d8d0c4;
+                       box-shadow:0 2px 8px rgba(0,0,0,0.05);
+                       padding:32px 48px 28px; position:relative; }}
+    .subscribe-card::before {{ content:''; display:block; position:absolute;
+                                top:0; left:0; right:0; height:2px;
+                                background:repeating-linear-gradient(
+                                  90deg,#3a3a3a 0px,#3a3a3a 4px,
+                                  transparent 4px,transparent 8px); }}
+    .subscribe-label {{ font-family:'Times New Roman',serif; font-size:9px;
+                        letter-spacing:0.28em; text-transform:uppercase;
+                        color:#9a9080; margin-bottom:10px; }}
+    .subscribe-title {{ font-size:17px; font-weight:500; color:#1e1e1e; margin-bottom:6px; }}
+    .subscribe-desc {{ font-family:'Times New Roman',serif; font-style:italic;
+                       font-size:11.5px; color:#9a9080; line-height:1.7; margin-bottom:20px; }}
+    .contact-line {{ margin-top:20px; padding-top:16px; border-top:1px solid #e0d8cc;
+                     display:flex; align-items:center; gap:8px; }}
+    .contact-name {{ font-size:11px; color:#6a6258; letter-spacing:0.04em; }}
+    .contact-divider {{ color:#c8c0b4; font-size:11px; }}
+    .contact-email {{ font-family:'Times New Roman',serif; font-style:italic;
+                      font-size:11px; color:#9a9080; text-decoration:none;
+                      border-bottom:1px solid #d8d0c4; padding-bottom:1px; }}
+    .limitation-note {{ font-family:'Times New Roman',serif; font-style:italic;
+                        font-size:10px; color:#b0a898; line-height:1.7;
+                        border-top:1px solid #e8e0d4; padding-top:16px; margin-top:4px; }}
   </style>
 </head>
 <body>
-<div style="background:#f0f2f5;padding:32px 16px;min-height:100vh;">
+<div class="page">
 
-  <!-- Card wrapper -->
-  <div style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:12px;
-              overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);">
+  <div class="email-wrap">
+    <div class="header">
+      <div class="header-eyebrow">AI Companion Signal Intelligence &#183; Daily Brief</div>
+      <div class="header-title">&#128225; {weekday}&#8217;s Signal Report</div>
+      <div class="header-date">{run_date}</div>
+    </div>
 
-    <!-- ── Header ── -->
-    <div style="background:linear-gradient(135deg,#1e1b4b 0%,#312e81 60%,#4338ca 100%);
-                padding:32px 36px 28px;">
-      <div style="display:inline-block;background:rgba(255,255,255,0.12);
-                  border-radius:20px;padding:4px 12px;margin-bottom:14px;">
-        <span style="color:#c7d2fe;font-size:11px;font-weight:600;
-                     letter-spacing:1.5px;text-transform:uppercase;">
-          📡 Signal Intelligence
-        </span>
+    <div class="stats-strip">
+      <div class="stat">
+        <span class="stat-num">{stats['posts']}</span>
+        <span class="stat-label">Posts Scanned</span>
       </div>
-      <h1 style="color:#ffffff;font-size:24px;font-weight:700;line-height:1.3;
-                 margin:0 0 6px;">
-        {weekday}'s AI Companion Report
-      </h1>
-      <p style="color:#a5b4fc;font-size:14px;margin:0;">{run_date}</p>
+      <div class="stat">
+        <span class="stat-num">{stats['new']}</span>
+        <span class="stat-label">New Signals</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">{stats['updated']}</span>
+        <span class="stat-label">Updated</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">{stats['watchlist']}</span>
+        <span class="stat-label">Watchlist</span>
+      </div>
     </div>
 
-    <!-- ── Accent bar ── -->
-    <div style="height:4px;background:linear-gradient(90deg,#6366f1,#8b5cf6,#ec4899);"></div>
+    <div class="body">
+      <div class="section">
+        <div class="section-header">
+          <div class="section-label">Today&#8217;s Signals</div>
+          <div class="section-rule"></div>
+        </div>
+        {insight_rows_html}
+      </div>
 
-    <!-- ── Body ── -->
-    <div class="content" style="padding:32px 36px;">
-      {body_html}
+      {featured_html}
+
+      <div class="limitation-note">
+        * Reddit signals are directional qualitative signals, not market-wide demand proof.
+        Each insight is tagged with evidence count and confidence level.
+      </div>
     </div>
 
-    <!-- ── Footer ── -->
-    <div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:20px 36px;">
-      <table width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-          <td>
-            <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.6;">
-              Generated by
-              <a href="https://github.com/Sylvan-Wang/ai_companion_signal_agent"
-                 style="color:#6366f1;text-decoration:none;font-weight:500;">
-                AI Companion Signal Agent
-              </a>
-              &nbsp;·&nbsp; Automated daily pipeline
-            </p>
-          </td>
-          <td align="right">
-            <a href="https://github.com/Sylvan-Wang/ai_companion_signal_agent"
-               style="display:inline-block;background:#6366f1;color:#ffffff;
-                      font-size:11px;font-weight:600;padding:6px 14px;
-                      border-radius:6px;text-decoration:none;letter-spacing:0.3px;">
-              View on GitHub →
-            </a>
-          </td>
-        </tr>
-      </table>
+    <div class="footer">
+      <div class="footer-sig">ai companion signal agent &#183; automated daily brief</div>
+      <a class="footer-link"
+         href="https://github.com/Sylvan-Wang/ai_companion_signal_agent">
+        View on GitHub &#8594;
+      </a>
     </div>
-
   </div>
+
+  <div class="subscribe-card">
+    <div class="subscribe-label">Subscribe &#183; Daily Signal Brief</div>
+    <div class="subscribe-title">One report. Every morning. In your inbox.</div>
+    <div class="subscribe-desc">
+      Automated tracking of AI companion product signals &#8212; emotional needs,
+      adoption barriers, trust concerns, and market opportunities.<br>
+      Daily. Under 5 minutes.
+    </div>
+    {subscribe_form_html}
+    <div class="contact-line">
+      <span class="contact-name">Sylvan Wang</span>
+      <span class="contact-divider">&#183;</span>
+      <a class="contact-email" href="mailto:zichenwang209@gmail.com">
+        zichenwang209@gmail.com
+      </a>
+    </div>
+  </div>
+
 </div>
 </body>
 </html>"""
-    return subject, plain, html
+
+    return subject, _plain_text(report_md), html
 
 
-# ─── Send ──────────────────────────────────────────────────────────────────────
+# ---- Send --------------------------------------------------------------------
 
 def send_report_email(report_path: str, run_date: str) -> bool:
     """
-    Send the daily report email.
+    Send the daily report to all recipients (env var + subscribers.txt).
 
     Args:
         report_path: Path to the generated markdown report file.
         run_date:    ISO date string (YYYY-MM-DD).
 
     Returns:
-        True if sent, False if skipped (no config) or failed.
+        True if sent, False if skipped or failed.
     """
     cfg = _email_config()
     if cfg is None:
-        print("      Email skipped — REPORT_EMAIL_TO / SMTP_USER / SMTP_PASSWORD not set.")
-        print("      To enable: add these to .env (local) or GitHub Secrets (CI).")
+        print("      Email skipped -- SMTP_USER / SMTP_PASSWORD not set, or no recipients.")
         return False
 
-    # Read report
     try:
         report_md = Path(report_path).read_text(encoding="utf-8")
     except FileNotFoundError:
-        print(f"      Email skipped — report file not found: {report_path}")
+        print(f"      Email skipped -- report file not found: {report_path}")
         return False
 
     subject, plain_text, html_body = _build_email(report_md, run_date)
 
-    # Build MIME message
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
-    msg["From"] = cfg["from"]
-    msg["To"] = cfg["to_header"]   # Shows all recipients in To: header
+    msg["From"]    = cfg["from"]
+    msg["To"]      = cfg["to_header"]
     msg.attach(MIMEText(plain_text, "plain", "utf-8"))
-    msg.attach(MIMEText(html_body, "html", "utf-8"))
+    msg.attach(MIMEText(html_body,  "html",  "utf-8"))
 
-    # Send to all recipients
     try:
         with smtplib.SMTP(cfg["smtp_host"], cfg["smtp_port"]) as server:
             server.ehlo()
@@ -316,10 +539,10 @@ def send_report_email(report_path: str, run_date: str) -> bool:
             server.login(cfg["smtp_user"], cfg["smtp_password"])
             server.sendmail(cfg["smtp_user"], cfg["to_list"], msg.as_string())
         n = len(cfg["to_list"])
-        print(f"      Email sent → {cfg['to_header']} ({n} recipient{'s' if n > 1 else ''})")
+        print(f"      Email sent to {n} recipient{'s' if n > 1 else ''}: {cfg['to_header']}")
         print(f"      Subject: {subject}")
         return True
     except Exception as e:
         print(f"      Email FAILED: {e}")
-        print("      Pipeline continues — email failure is non-fatal.")
+        print("      Pipeline continues -- email failure is non-fatal.")
         return False
