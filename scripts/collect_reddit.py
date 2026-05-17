@@ -478,4 +478,76 @@ def _collect_live(config: dict) -> dict[str, Any]:
 
                     post.comments.replace_more(limit=0)
                     comments = []
-          
+                    for comment in post.comments[:comment_limit]:
+                        if not hasattr(comment, "body"):
+                            continue
+                        if comment.body in ("[deleted]", "[removed]"):
+                            continue
+                        comments.append({
+                            "comment_id": comment.id,
+                            "comment_body": comment.body,
+                            "comment_score": comment.score,
+                            "comment_created_utc": datetime.fromtimestamp(
+                                comment.created_utc, tz=timezone.utc
+                            ).isoformat(),
+                            "vulnerability_flag": vulnerability_flag,
+                        })
+
+                    all_posts.append({
+                        "post_id": post.id,
+                        "subreddit": subreddit_name,
+                        "market_track": track_name,
+                        "matched_keyword": matched_kw,
+                        "source": "reddit",
+                        "post_title": post.title,
+                        "post_body": post.selftext,
+                        "post_score": post.score,
+                        "post_num_comments": post.num_comments,
+                        "post_created_utc": created_utc_str,
+                        "post_url": f"https://reddit.com{post.permalink}",
+                        "vulnerability_flag": vulnerability_flag,
+                        "comments": comments,
+                    })
+                    seen_ids.add(post.id)
+                    track_coverage[track_name] = track_coverage.get(track_name, 0) + 1
+
+            except Exception as e:
+                print(f"        WARNING: Failed to fetch r/{subreddit_name}: {e}")
+                continue
+
+    missing_tracks = [t for t, count in track_coverage.items() if count == 0]
+    return {
+        "posts": all_posts,
+        "track_coverage": track_coverage,
+        "missing_tracks": missing_tracks,
+    }
+
+
+# ─── Public entry point ───────────────────────────────────────────────────────
+
+def collect_posts(config: dict) -> dict:
+    """
+    Main collection function. Auto-selects collection mode:
+
+      1. PRAW mode      — REDDIT_CLIENT_ID + SECRET + USER_AGENT all set
+      2. Public JSON    — default; uses reddit.com/*.json (no credentials)
+      3. Sample mode    — SIGNAL_AGENT_USE_SAMPLE=true (local testing only)
+
+    Returns:
+        {
+            "posts": [...],
+            "track_coverage": {track_name: post_count, ...},
+            "missing_tracks": [track_names_with_zero_posts]
+        }
+    """
+    if _is_sample_mode():
+        print("      [sample mode] SIGNAL_AGENT_USE_SAMPLE=true -- using sample data")
+        return _load_sample_data(config)
+
+    if _is_praw_mode():
+        print("      [praw mode] Reddit OAuth credentials detected -- fetching via PRAW")
+        return _collect_live(config)
+
+    print("      [arctic-shift mode] No Reddit credentials -- fetching via Arctic Shift archive API")
+    print("      (arctic-shift.photon-reddit.com — third-party archive, no IP restrictions)")
+    return _collect_public_json(config)
