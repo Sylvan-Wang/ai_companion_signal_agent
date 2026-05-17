@@ -172,18 +172,77 @@ def _load_sample_data(config: dict) -> dict[str, Any]:
     }
 
 
-# ─── RSS + Public JSON collection (no credentials needed) ────────────────────
-# Reddit RSS feeds are designed for machine consumption and are less
-# aggressively blocked than the JSON API on cloud runner IPs.
-# Falls back to public JSON if RSS is also blocked.
+# ─── Arctic Shift + RSS + Public JSON (no credentials needed) ────────────────
+# Priority order:
+#   1. Arctic Shift — third-party Reddit archive; not subject to Reddit IP blocks
+#   2. Reddit RSS   — less aggressively blocked than JSON on cloud runner IPs
+#   3. Reddit JSON  — fallback for local runs where RSS is also unavailable
 
+_ARCTIC_HEADERS = {
+    "User-Agent": "ai_companion_signal_agent/0.1 (research)"
+}
 _RSS_HEADERS = {
     "User-Agent": "Mozilla/5.0 (compatible; feedparser/6.0; +https://github.com/Sylvan-Wang/ai_companion_signal_agent)"
 }
 _JSON_HEADERS = {
     "User-Agent": "ai_companion_signal_agent/0.1 (research)"
 }
-_REQUEST_DELAY = 2.0  # seconds between requests
+_REQUEST_DELAY = 1.5  # seconds between requests
+
+
+def _arctic_shift_fetch(subreddit_name: str, limit: int = 100, after_utc: float | None = None) -> list[dict]:
+    """
+    Fetch posts from Arctic Shift API (third-party Reddit archive).
+    https://arctic-shift.photon-reddit.com
+    Not subject to Reddit's IP-level blocks on Azure/cloud runners.
+
+    Returns list of dicts with keys: id, title, selftext, score, created_utc, permalink.
+    """
+    url = "https://arctic-shift.photon-reddit.com/api/posts/search"
+    params: dict = {
+        "subreddit": subreddit_name,
+        "limit": min(limit, 100),
+        "sort": "desc",          # newest first
+        "sort_by": "created_utc",
+    }
+    if after_utc is not None:
+        params["after"] = str(int(after_utc))
+
+    try:
+        resp = requests.get(url, params=params, headers=_ARCTIC_HEADERS, timeout=20)
+        if resp.status_code == 429:
+            print(f"        WARNING: Arctic Shift rate-limited for r/{subreddit_name}, retrying in 10s...")
+            time.sleep(10)
+            resp = requests.get(url, params=params, headers=_ARCTIC_HEADERS, timeout=20)
+        if resp.status_code != 200:
+            print(f"        WARNING: Arctic Shift returned {resp.status_code} for r/{subreddit_name}")
+            return []
+        data = resp.json()
+        raw = data.get("data", [])
+        posts = []
+        for p in raw:
+            # created_utc may be int, float, or ISO string
+            raw_ts = p.get("created_utc", 0)
+            try:
+                ts = float(raw_ts)
+            except (TypeError, ValueError):
+                try:
+                    ts = datetime.fromisoformat(str(raw_ts).replace("Z", "+00:00")).timestamp()
+                except Exception:
+                    ts = 0.0
+            permalink = p.get("permalink", "") or f"/r/{subreddit_name}/comments/{p.get('id', '')}/"
+            posts.append({
+                "id":          p.get("id", ""),
+                "title":       p.get("title", ""),
+                "selftext":    p.get("selftext", "") or p.get("body", ""),
+                "score":       p.get("score", 0),
+                "created_utc": ts,
+                "permalink":   permalink,
+            })
+        return posts
+    except Exception as e:
+        print(f"        WARNING: Arctic Shift fetch failed for r/{subreddit_name}: {e}")
+        return []
 
 
 def _rss_fetch(subreddit_name: str, sort: str = "new", limit: int = 25) -> list[dict]:
@@ -253,23 +312,35 @@ def _json_fetch(subreddit_name: str, sort: str = "new", limit: int = 25) -> list
         return []
 
 
-def _fetch_posts(subreddit_name: str, sort: str = "new", limit: int = 25) -> list[dict]:
-    """Try RSS first, fall back to JSON."""
-    posts = _rss_fetch(subreddit_name, sort, limit)
-    if not posts:
-        posts = _json_fetch(subreddit_name, sort, limit)
-    return posts
+def _fetch_posts(subreddit_name: str, sort: str = "new", limit: int = 100,
+                 after_utc: float | None = None) -> list[dict]:
+    """
+    Try Arctic Shift (primary), then RSS, then Reddit JSON as last resort.
+    Arctic Shift is a third-party archive not subject to Reddit's IP blocks.
+    """
+    posts = _arctic_shift_fetch(subreddit_name, limit=limit, after_utc=after_utc)
+    if posts:
+        return posts
+    print(f"        Arctic Shift returned 0 posts for r/{subreddit_name}, trying RSS...")
+    posts = _rss_fetch(subreddit_name, sort, min(limit, 25))
+    if posts:
+        return posts
+    print(f"        RSS also empty for r/{subreddit_name}, trying Reddit JSON...")
+    return _json_fetch(subreddit_name, sort, min(limit, 25))
 
 
 def _collect_public_json(config: dict) -> dict[str, Any]:
     """
-    Collect posts via RSS (primary) with JSON fallback.
-    RSS is less aggressively blocked by Reddit on cloud runner IPs.
+    Collect posts via Arctic Shift API (primary) → RSS → JSON fallback.
+    Arctic Shift is a third-party Reddit archive not subject to cloud-runner IP blocks.
     """
     collection_cfg = config.get("collection", {})
     post_limit = min(collection_cfg.get("post_limit_per_run", 60), 100)
     lookback_window = collection_cfg.get("lookback_window", "24h")
     lookback_hours = int(re.sub(r"[^\d]", "", str(lookback_window))) if lookback_window else 24
+
+    # Compute after_utc for Arctic Shift native lookback filtering
+    after_utc = (datetime.now(timezone.utc) - timedelta(hours=lookback_hours)).timestamp()
 
     exclusions = _get_exclusion_keywords(config)
     active_tracks = _get_active_tracks(config)
@@ -283,11 +354,11 @@ def _collect_public_json(config: dict) -> dict[str, Any]:
         keywords = track_cfg.get("keywords", [])
         vulnerability_flag = _is_vulnerable_track(track_name, track_cfg)
 
-        print(f"        [{track_name}] Fetching from {subreddits}...")
+        print(f"        [{track_name}] Fetching from {subreddits} (via Arctic Shift)...")
 
         for subreddit_name in subreddits:
-            for sort in ("new", "hot"):
-                raw_posts = _fetch_posts(subreddit_name, sort, post_limit)
+            for sort in ("new",):  # Arctic Shift sorts by created_utc desc; one pass is enough
+                raw_posts = _fetch_posts(subreddit_name, sort=sort, limit=post_limit, after_utc=after_utc)
                 time.sleep(_REQUEST_DELAY)
 
                 for p in raw_posts:
@@ -407,76 +478,4 @@ def _collect_live(config: dict) -> dict[str, Any]:
 
                     post.comments.replace_more(limit=0)
                     comments = []
-                    for comment in post.comments[:comment_limit]:
-                        if not hasattr(comment, "body"):
-                            continue
-                        if comment.body in ("[deleted]", "[removed]"):
-                            continue
-                        comments.append({
-                            "comment_id": comment.id,
-                            "comment_body": comment.body,
-                            "comment_score": comment.score,
-                            "comment_created_utc": datetime.fromtimestamp(
-                                comment.created_utc, tz=timezone.utc
-                            ).isoformat(),
-                            "vulnerability_flag": vulnerability_flag,
-                        })
-
-                    all_posts.append({
-                        "post_id": post.id,
-                        "subreddit": subreddit_name,
-                        "market_track": track_name,
-                        "matched_keyword": matched_kw,
-                        "source": "reddit",
-                        "post_title": post.title,
-                        "post_body": post.selftext,
-                        "post_score": post.score,
-                        "post_num_comments": post.num_comments,
-                        "post_created_utc": created_utc_str,
-                        "post_url": f"https://reddit.com{post.permalink}",
-                        "vulnerability_flag": vulnerability_flag,
-                        "comments": comments,
-                    })
-                    seen_ids.add(post.id)
-                    track_coverage[track_name] = track_coverage.get(track_name, 0) + 1
-
-            except Exception as e:
-                print(f"        WARNING: Failed to fetch r/{subreddit_name}: {e}")
-                continue
-
-    missing_tracks = [t for t, count in track_coverage.items() if count == 0]
-    return {
-        "posts": all_posts,
-        "track_coverage": track_coverage,
-        "missing_tracks": missing_tracks,
-    }
-
-
-# ─── Public entry point ───────────────────────────────────────────────────────
-
-def collect_posts(config: dict) -> dict:
-    """
-    Main collection function. Auto-selects collection mode:
-
-      1. PRAW mode      — REDDIT_CLIENT_ID + SECRET + USER_AGENT all set
-      2. Public JSON    — default; uses reddit.com/*.json (no credentials)
-      3. Sample mode    — SIGNAL_AGENT_USE_SAMPLE=true (local testing only)
-
-    Returns:
-        {
-            "posts": [...],
-            "track_coverage": {track_name: post_count, ...},
-            "missing_tracks": [track_names_with_zero_posts]
-        }
-    """
-    if _is_sample_mode():
-        print("      [sample mode] SIGNAL_AGENT_USE_SAMPLE=true -- using sample data")
-        return _load_sample_data(config)
-
-    if _is_praw_mode():
-        print("      [praw mode] Reddit OAuth credentials detected -- fetching via PRAW")
-        return _collect_live(config)
-
-    print("      [public JSON mode] No credentials -- fetching via reddit.com public API")
-    print("      (No API key required. Rate-limited to ~1 req/1.5s.)")
-    return _collect_public_json(config)
+          
