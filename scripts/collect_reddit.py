@@ -172,37 +172,102 @@ def _load_sample_data(config: dict) -> dict[str, Any]:
     }
 
 
-# ─── Public JSON collection (no credentials needed) ──────────────────────────
+# ─── RSS + Public JSON collection (no credentials needed) ────────────────────
+# Reddit RSS feeds are designed for machine consumption and are less
+# aggressively blocked than the JSON API on cloud runner IPs.
+# Falls back to public JSON if RSS is also blocked.
 
-_PUBLIC_HEADERS = {
-    "User-Agent": "ai_companion_signal_agent/0.1 (research; github.com/Sylvan-Wang/ai_companion_signal_agent)"
+_RSS_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (compatible; feedparser/6.0; +https://github.com/Sylvan-Wang/ai_companion_signal_agent)"
 }
-_REQUEST_DELAY = 1.5  # seconds between requests — be respectful
+_JSON_HEADERS = {
+    "User-Agent": "ai_companion_signal_agent/0.1 (research)"
+}
+_REQUEST_DELAY = 2.0  # seconds between requests
 
 
-def _public_fetch(url: str, params: dict | None = None) -> dict | None:
-    """GET a reddit public JSON endpoint. Returns parsed JSON or None on error."""
+def _rss_fetch(subreddit_name: str, sort: str = "new", limit: int = 25) -> list[dict]:
+    """
+    Fetch posts via Reddit RSS feed.
+    Returns list of dicts with keys: id, title, selftext, score, created_utc, permalink.
+    """
     try:
-        resp = requests.get(url, headers=_PUBLIC_HEADERS, params=params, timeout=15)
-        if resp.status_code == 429:
-            print(f"        Rate-limited by Reddit, waiting 10s...")
-            time.sleep(10)
-            resp = requests.get(url, headers=_PUBLIC_HEADERS, params=params, timeout=15)
-        resp.raise_for_status()
-        return resp.json()
+        import feedparser
+    except ImportError:
+        return []
+
+    url = f"https://www.reddit.com/r/{subreddit_name}/{sort}.rss"
+    try:
+        feed = feedparser.parse(url, request_headers=_RSS_HEADERS)
+        if feed.bozo and not feed.entries:
+            return []
+        posts = []
+        for entry in feed.entries[:limit]:
+            # RSS entries have published_parsed for timestamp
+            import calendar
+            try:
+                ts = calendar.timegm(entry.get("published_parsed") or entry.get("updated_parsed") or time.gmtime())
+            except Exception:
+                ts = time.time()
+            # Extract post id from the entry id/link (format: t3_XXXXX)
+            post_id = entry.get("id", "").split("_")[-1] or entry.get("link", "").split("/")[-2]
+            # Content is in summary or content
+            content = entry.get("summary", "")
+            posts.append({
+                "id":          post_id,
+                "title":       entry.get("title", ""),
+                "selftext":    content,
+                "score":       0,   # RSS doesn't expose score
+                "created_utc": ts,
+                "permalink":   entry.get("link", ""),
+            })
+        return posts
     except Exception as e:
-        print(f"        WARNING: request failed for {url}: {e}")
-        return None
+        print(f"        WARNING: RSS fetch failed for r/{subreddit_name}/{sort}: {e}")
+        return []
+
+
+def _json_fetch(subreddit_name: str, sort: str = "new", limit: int = 25) -> list[dict]:
+    """Fallback: fetch posts via public JSON API."""
+    url = f"https://www.reddit.com/r/{subreddit_name}/{sort}.json"
+    try:
+        resp = requests.get(url, headers=_JSON_HEADERS,
+                            params={"limit": limit, "raw_json": 1}, timeout=15)
+        if resp.status_code in (403, 429):
+            return []
+        resp.raise_for_status()
+        children = resp.json().get("data", {}).get("children", [])
+        posts = []
+        for child in children:
+            p = child.get("data", {})
+            posts.append({
+                "id":          p.get("id", ""),
+                "title":       p.get("title", ""),
+                "selftext":    p.get("selftext", ""),
+                "score":       p.get("score", 0),
+                "created_utc": p.get("created_utc", 0),
+                "permalink":   p.get("permalink", ""),
+            })
+        return posts
+    except Exception:
+        return []
+
+
+def _fetch_posts(subreddit_name: str, sort: str = "new", limit: int = 25) -> list[dict]:
+    """Try RSS first, fall back to JSON."""
+    posts = _rss_fetch(subreddit_name, sort, limit)
+    if not posts:
+        posts = _json_fetch(subreddit_name, sort, limit)
+    return posts
 
 
 def _collect_public_json(config: dict) -> dict[str, Any]:
     """
-    Collect posts using Reddit's public JSON API (no OAuth needed).
-    Hits: https://www.reddit.com/r/{sub}/new.json and /hot.json
+    Collect posts via RSS (primary) with JSON fallback.
+    RSS is less aggressively blocked by Reddit on cloud runner IPs.
     """
     collection_cfg = config.get("collection", {})
     post_limit = min(collection_cfg.get("post_limit_per_run", 60), 100)
-    comment_limit = collection_cfg.get("comment_limit_per_post", 10)
     lookback_window = collection_cfg.get("lookback_window", "24h")
     lookback_hours = int(re.sub(r"[^\d]", "", str(lookback_window))) if lookback_window else 24
 
@@ -221,21 +286,13 @@ def _collect_public_json(config: dict) -> dict[str, Any]:
         print(f"        [{track_name}] Fetching from {subreddits}...")
 
         for subreddit_name in subreddits:
-            # Fetch from both /new and /hot to maximise coverage
             for sort in ("new", "hot"):
-                url = f"https://www.reddit.com/r/{subreddit_name}/{sort}.json"
-                data = _public_fetch(url, params={"limit": post_limit, "raw_json": 1})
+                raw_posts = _fetch_posts(subreddit_name, sort, post_limit)
                 time.sleep(_REQUEST_DELAY)
 
-                if not data:
-                    continue
-
-                children = data.get("data", {}).get("children", [])
-                for child in children:
-                    p = child.get("data", {})
+                for p in raw_posts:
                     post_id = p.get("id", "")
-
-                    if post_id in seen_ids or p.get("stickied"):
+                    if not post_id or post_id in seen_ids:
                         continue
 
                     combined_text = f"{p.get('title', '')} {p.get('selftext', '')}"
@@ -246,50 +303,43 @@ def _collect_public_json(config: dict) -> dict[str, Any]:
                         continue
 
                     created_utc = p.get("created_utc", 0)
-                    created_str = datetime.fromtimestamp(created_utc, tz=timezone.utc).isoformat()
+                    created_str = datetime.fromtimestamp(float(created_utc), tz=timezone.utc).isoformat()
                     if not _within_lookback(created_str, lookback_hours):
                         continue
 
-                    # Fetch comments via public API
-                    comments = []
-                    comments_url = f"https://www.reddit.com/r/{subreddit_name}/comments/{post_id}.json"
-                    cdata = _public_fetch(comments_url, params={"limit": comment_limit, "depth": 1, "raw_json": 1})
-                    time.sleep(_REQUEST_DELAY)
+                    permalink = p.get("permalink", "")
+                    if not permalink.startswith("http"):
+                        permalink = f"https://reddit.com{permalink}"
 
-                    if cdata and len(cdata) >= 2:
-                        comment_children = cdata[1].get("data", {}).get("children", [])
-                        for cc in comment_children[:comment_limit]:
-                            cd = cc.get("data", {})
-                            body = cd.get("body", "")
-                            if not body or body in ("[deleted]", "[removed]"):
-                                continue
-                            comments.append({
-                                "comment_id": cd.get("id", ""),
-                                "comment_body": body,
-                                "comment_score": cd.get("score", 0),
-                                "comment_created_utc": datetime.fromtimestamp(
-                                    cd.get("created_utc", 0), tz=timezone.utc
-                                ).isoformat(),
-                                "vulnerability_flag": vulnerability_flag,
-                            })
+                    comments = []
+                    # Note: comments skipped for RSS mode (no comment API without OAuth)
+                    post_url = permalink
+                    # PLACEHOLDER for future comment collection:
+                    # comment_data = _json_fetch comments endpoint if needed
+
+                    dummy_comment_body = ""  # skip comment fetch to avoid 403 cascade
+                    _ = dummy_comment_body
 
                     all_posts.append({
-                        "post_id": post_id,
-                        "subreddit": subreddit_name,
-                        "market_track": track_name,
-                        "matched_keyword": matched_kw,
-                        "source": "reddit_public",
-                        "post_title": p.get("title", ""),
-                        "post_body": p.get("selftext", ""),
-                        "post_score": p.get("score", 0),
-                        "post_num_comments": p.get("num_comments", 0),
+                        "post_id":          post_id,
+                        "subreddit":        subreddit_name,
+                        "market_track":     track_name,
+                        "matched_keyword":  matched_kw,
+                        "source":           "reddit_rss",
+                        "post_title":       p.get("title", ""),
+                        "post_body":        p.get("selftext", ""),
+                        "post_score":       p.get("score", 0),
+                        "post_num_comments": 0,
                         "post_created_utc": created_str,
-                        "post_url": f"https://reddit.com{p.get('permalink', '')}",
+                        "post_url":         post_url,
                         "vulnerability_flag": vulnerability_flag,
-                        "comments": comments,
+                        "comments":         comments,
                     })
                     seen_ids.add(post_id)
                     track_coverage[track_name] = track_coverage.get(track_name, 0) + 1
+
+                    # Respect Reddit — brief pause between comment fetches removed
+                    # (no comment fetching in RSS mode)
 
     missing_tracks = [t for t, count in track_coverage.items() if count == 0]
     return {
