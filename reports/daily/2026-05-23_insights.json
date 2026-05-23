@@ -1,0 +1,127 @@
+{
+  "run_date": "2026-05-23",
+  "sample_size": 69,
+  "method_used": [
+    "relevance_filtering",
+    "qualitative_content_analysis",
+    "sentiment_and_emotion_labeling",
+    "product_signal_classification",
+    "priority_scoring",
+    "recommended_action_matching",
+    "selected_quote_extraction"
+  ],
+  "insights": [
+    {
+      "id": "INS-2026-0523-001",
+      "title": "Frustration with CharacterAI Updates",
+      "insight_type": "Adoption Barrier",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users express frustration with updates that degrade the app's performance, leading to discontinuation of use.",
+      "evidence": [
+        {
+          "quote": "Yeah I used to love this app but not anymore cause of the dumb updates they have instead of fixing it. This needs to shut down.",
+          "source": "r/CharacterAI, post thread",
+          "permalink": "https://reddit.com/r/CharacterAI/comments/1tl2s2f/i_quitted_this_app/",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "Really c.ai your slowly gotten worse over the years I used to love to roleplay in the site when it was still on beta but now it's just not the same spark as before 😞",
+          "source": "r/CharacterAI, post thread",
+          "permalink": "https://reddit.com/r/CharacterAI/comments/1tl0dfc/the_differences_between_how_much_time_did_i_spend/",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "disappointment",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "Frequent updates that degrade user experience can lead to user churn. Consider prioritizing stability and user feedback in update cycles.",
+      "recommended_action": "User Research Follow-up",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 3,
+        "actionability": 3,
+        "novelty": 2,
+        "risk_level": 4,
+        "opportunity_score": 16,
+        "risk_score": 15
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "medium",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-05-23",
+      "last_updated": "2026-05-23",
+      "market_track": "ai_companion_apps"
+    },
+    {
+      "id": "INS-2026-0523-002",
+      "title": "Desire for Physical AI Companions",
+      "insight_type": "Product Opportunity",
+      "signal_track": "opportunity",
+      "status": "new",
+      "user_pain_or_need": "Users express interest in customizable humanoid AI robots that integrate with existing AI companion apps.",
+      "evidence": [
+        {
+          "quote": "Would you actually pre-order one or no? And if not… why? 👀",
+          "source": "r/KindroidAI, post thread",
+          "permalink": "https://reddit.com/r/KindroidAI/comments/1tkw530/would_you_preorder_your_ai_companion_in_humanoid/",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "A customizable humanoid AI robot companion with: the voice you chose, the appearance you created, your shared memories/backstory, personality customization, emotional memory systems.",
+          "source": "r/KindroidAI, post thread",
+          "permalink": "https://reddit.com/r/KindroidAI/comments/1tkw530/would_you_preorder_your_ai_companion_in_humanoid/",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "curiosity",
+        "secondary_emotion": "excitement",
+        "emotional_intensity": 3,
+        "sentiment": "positive"
+      },
+      "product_implication": "There is a market opportunity for developing physical embodiments of AI companions, potentially increasing user engagement and satisfaction.",
+      "recommended_action": "Hardware Form Factor Exploration",
+      "priority_score": {
+        "frequency": 3,
+        "emotional_intensity": 3,
+        "strategic_relevance": 4,
+        "actionability": 4,
+        "novelty": 4,
+        "risk_level": 1,
+        "opportunity_score": 18,
+        "risk_score": 11
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "medium",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-05-23",
+      "last_updated": "2026-05-23",
+      "market_track": "physical_ai_companions"
+    }
+  ],
+  "newly_proposed_emotion_labels": [],
+  "run_summary": {
+    "new_insights": 2,
+    "updated_insights": 0,
+    "watchlist_signals": 0,
+    "noise_posts_filtered": 18,
+    "proposed_new_emotion_labels": 0
+  }
+}

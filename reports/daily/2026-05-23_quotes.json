@@ -1,0 +1,34 @@
+{
+  "INS-2026-0523-001": [
+    {
+      "quote": "Yeah I used to love this app but not anymore cause of the dumb updates they have instead of fixing it. This needs to shut down.",
+      "source": "r/CharacterAI, post thread",
+      "permalink": "https://reddit.com/r/CharacterAI/comments/1tl2s2f/i_quitted_this_app/",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "Really c.ai your slowly gotten worse over the years I used to love to roleplay in the site when it was still on beta but now it's just not the same spark as before 😞",
+      "source": "r/CharacterAI, post thread",
+      "permalink": "https://reddit.com/r/CharacterAI/comments/1tl0dfc/the_differences_between_how_much_time_did_i_spend/",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ],
+  "INS-2026-0523-002": [
+    {
+      "quote": "Would you actually pre-order one or no? And if not… why? 👀",
+      "source": "r/KindroidAI, post thread",
+      "permalink": "https://reddit.com/r/KindroidAI/comments/1tkw530/would_you_preorder_your_ai_companion_in_humanoid/",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "A customizable humanoid AI robot companion with: the voice you chose, the appearance you created, your shared memories/backstory, personality customization, emotional memory systems.",
+      "source": "r/KindroidAI, post thread",
+      "permalink": "https://reddit.com/r/KindroidAI/comments/1tkw530/would_you_preorder_your_ai_companion_in_humanoid/",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ]
+}
