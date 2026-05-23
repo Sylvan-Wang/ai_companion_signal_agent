@@ -394,6 +394,601 @@ automation:
   failure_notification: "github_actions_log_only"
 
 
+# AI Companion Signal Intelligence Agent — Configuration v0.3
+# Track-based keyword and subreddit system.
+# All agent behaviour is driven from this file — do not hardcode values in scripts.
+
+# ─────────────────────────────────────────────
+# REPORT SCHEDULE
+# collect runs every day; report + email sent every N days
+# Set report_every_days: 1 to revert to daily reports
+# ─────────────────────────────────────────────
+report_schedule:
+  report_every_days: 3       # Generate report + send email every 3 collect cycles
+  staging_lookback_days: 3   # Merge this many days of staged data for each report
+
+# ─────────────────────────────────────────────
+# PROJECT IDENTITY
+# ─────────────────────────────────────────────
+project:
+  name: "AI Companion Signal Intelligence Agent"
+  version: "0.3.0"
+  monitored_market: >
+    AI companion products and adjacent physical AI interfaces —
+    including apps, devices, robots, wearables, office hardware, and ambient AI systems.
+
+# ─────────────────────────────────────────────
+# MARKET COVERAGE TRACKS
+# 7 tracks, each with its own subreddits and keywords.
+# ─────────────────────────────────────────────
+market_coverage_tracks:
+
+  ai_companion_apps:
+    description: >
+      Existing AI companion and chatbot communities. Captures usage patterns,
+      memory expectations, emotional attachment, pricing friction, subscription concerns,
+      safety risks, relationship continuity, and retention signals.
+    active_source: "reddit"
+    future_sources:
+      - "product_hunt"
+      - "youtube_comments"
+      - "app_store_reviews"
+    subreddits:
+      - Replika
+      - CharacterAI
+      - NomiAI
+      - KindroidAI
+    keywords:
+      - "AI companion"
+      - "AI friend"
+      - "AI girlfriend"
+      - "AI boyfriend"
+      - "AI partner"
+      - "AI relationship"
+      - "virtual companion"
+      - "digital companion"
+      - "AI emotional support"
+      - "AI therapist"
+      - "AI coach"
+      - "Replika"
+      - "Character AI"
+      - "Nomi AI"
+      - "Kindroid"
+      - "Pi AI"
+      - "Inflection Pi"
+      - "memory"
+      - "long-term memory"
+      - "personality"
+      - "roleplay"
+      - "voice chat"
+      - "emotional attachment"
+      - "dependency"
+      - "loneliness"
+      - "felt seen"
+
+  physical_ai_companions:
+    description: >
+      Physical robots, AI pets, social robots, desktop companions, smart plush toys,
+      home robots, and embodied AI products. Detects whether users want AI companionship
+      beyond phone-based chat interfaces.
+    active_source: "reddit"
+    future_sources:
+      - "product_hunt"
+      - "youtube_comments"
+    subreddits:
+      - robotics
+      - robots
+      - gadgets
+      - homeautomation
+      - smarthome
+      - Futurology
+    keywords:
+      - "companion robot"
+      - "AI companion robot"
+      - "social robot"
+      - "personal robot"
+      - "home robot"
+      - "desktop robot"
+      - "robot pet"
+      - "AI pet"
+      - "robot dog"
+      - "robot cat"
+      - "emotional support robot"
+      - "smart plush"
+      - "AI plush"
+      - "interactive plush"
+      - "AI toy"
+      - "smart toy"
+      - "embodied AI"
+      - "physical AI companion"
+      - "ambient companion"
+      - "desktop companion"
+      - "non-humanoid robot"
+      - "humanoid robot"
+      - "Lovot"
+      - "ElliQ"
+      - "Moxie robot"
+      - "Aibo"
+      - "Jibo"
+      - "Kuri robot"
+
+  wearable_ai_companions:
+    description: >
+      Wearable AI devices, AI pendants, AI pins, smart glasses, smart rings,
+      always-on voice companions, and body-worn ambient AI interfaces.
+      Captures low-friction, always-available, personal AI interaction signals.
+    active_source: "reddit"
+    future_sources:
+      - "product_hunt"
+      - "youtube_comments"
+    subreddits:
+      - wearables
+      - smartglasses
+      - gadgets
+      - OuraRing
+    keywords:
+      - "AI wearable"
+      - "wearable AI"
+      - "AI pendant"
+      - "AI necklace"
+      - "AI pin"
+      - "AI badge"
+      - "AI clip"
+      - "AI glasses"
+      - "smart glasses"
+      - "smart ring"
+      - "AI ring"
+      - "AI earbuds"
+      - "AI headphones"
+      - "AI watch"
+      - "AI smartwatch"
+      - "always-on AI"
+      - "ambient AI"
+      - "personal AI"
+      - "voice companion"
+      - "voice-first AI"
+      - "emotion tracking"
+      - "mood tracking"
+      - "lifelogging"
+      - "memory assistant"
+      - "context-aware AI"
+      - "Friend AI necklace"
+      - "Limitless Pendant"
+      - "Humane AI Pin"
+      - "Rabbit R1"
+      - "Ray-Ban Meta"
+      - "Bee AI"
+      - "Tab AI"
+      - "Rewind Pendant"
+
+  ai_office_hardware:
+    description: >
+      AI office hardware, AI meeting devices, AI voice recorders, AI notetakers,
+      transcription devices, meeting summarizers, speakerphone docks, smart pens,
+      and capture-first productivity hardware. Adjacent signals for physical AI interface
+      design, privacy concerns, ambient recording acceptance, and always-on assistant behavior.
+    active_source: "reddit"
+    future_sources:
+      - "product_hunt"
+      - "youtube_comments"
+    subreddits:
+      - gadgets
+      - productivity
+      - artificialinteligence
+      - ChatGPT
+      - digitalnomad
+      - remotework
+    keywords:
+      - "AI recorder"
+      - "AI voice recorder"
+      - "AI notetaker"
+      - "AI note taker"
+      - "AI meeting recorder"
+      - "AI meeting assistant"
+      - "meeting recorder"
+      - "meeting transcription device"
+      - "voice transcription device"
+      - "smart recorder"
+      - "wearable recorder"
+      - "AI dictation device"
+      - "AI summary device"
+      - "AI action items"
+      - "transcription hardware"
+      - "smart pen"
+      - "AI pen"
+      - "AI speakerphone"
+      - "AI conference device"
+      - "AI productivity hardware"
+      - "Plaud"
+      - "Plaud Note"
+      - "Plaud NotePin"
+      - "Limitless"
+      - "Bee AI"
+      - "HiDock"
+      - "Otter"
+      - "Fathom"
+      - "Fireflies"
+      - "Granola"
+      - "Read AI"
+
+  ambient_ai_devices:
+    description: >
+      Ambient AI devices, always-listening assistants, context-aware devices,
+      smart home AI interfaces, and environment-based personal AI systems.
+      Identifies whether users prefer low-interruption AI presence over
+      chat-based or screen-based interaction.
+    active_source: "reddit"
+    future_sources:
+      - "product_hunt"
+      - "youtube_comments"
+    subreddits:
+      - smarthome
+      - homeautomation
+      - gadgets
+      - Futurology
+    keywords:
+      - "ambient AI"
+      - "ambient assistant"
+      - "always-listening AI"
+      - "always-on assistant"
+      - "context-aware assistant"
+      - "smart home AI"
+      - "home AI assistant"
+      - "AI home device"
+      - "AI speaker"
+      - "AI display"
+      - "AI clock"
+      - "AI desk device"
+      - "screenless AI"
+      - "voice-first device"
+      - "proactive assistant"
+      - "AI that remembers"
+      - "AI that listens"
+      - "ambient computing"
+      - "calm technology"
+      - "low-friction AI"
+      - "non-screen interface"
+
+  reference_product_tracking:
+    description: >
+      Specific reference products and launches used to understand market reaction,
+      adoption barriers, failure points, privacy concerns, form-factor expectations,
+      and early adopter feedback around AI hardware and AI companion-like devices.
+    active_source: "reddit"
+    future_sources:
+      - "product_hunt"
+      - "youtube_comments"
+    subreddits:
+      - gadgets
+      - Futurology
+      - wearables
+      - robotics
+    reference_products:
+      - "Rabbit R1"
+      - "Humane AI Pin"
+      - "Friend AI necklace"
+      - "Limitless Pendant"
+      - "Bee AI"
+      - "Plaud Note"
+      - "Plaud NotePin"
+      - "HiDock"
+      - "Ray-Ban Meta"
+      - "Oura Ring"
+      - "Meta smart glasses"
+      - "Lovot"
+      - "ElliQ"
+      - "Moxie robot"
+      - "Aibo"
+    keywords:
+      - "Rabbit R1"
+      - "Humane AI Pin"
+      - "Friend AI necklace"
+      - "Limitless Pendant"
+      - "Bee AI"
+      - "Plaud Note"
+      - "Plaud NotePin"
+      - "HiDock"
+      - "Ray-Ban Meta"
+      - "Oura Ring"
+      - "Meta smart glasses"
+      - "Lovot"
+      - "ElliQ"
+      - "Moxie robot"
+      - "Aibo"
+
+  emotional_need_adjacent:
+    description: >
+      Communities that reveal loneliness, emotional support needs, social friction,
+      routine support needs, and desire for low-pressure companionship.
+      MUST be treated as emotional need signal sources only — not acquisition targets.
+    active_source: "reddit"
+    future_sources: []
+    vulnerability_flag: true
+    subreddits:
+      - lonely
+      - socialskills
+      - selfimprovement
+      - DecidingToBeBetter
+      - GetMotivated
+    keywords:
+      - "lonely"
+      - "loneliness"
+      - "alone"
+      - "someone to talk to"
+      - "emotional support"
+      - "daily check-in"
+      - "feeling understood"
+      - "companionship"
+      - "social anxiety"
+      - "routine support"
+      - "accountability"
+      - "comfort object"
+      - "low pressure"
+      - "non-judgmental"
+      - "feeling seen"
+      - "feeling heard"
+      - "parasocial"
+      - "attachment"
+      - "coping"
+
+# ─────────────────────────────────────────────
+# SOURCE POLICY
+# ─────────────────────────────────────────────
+source_policy:
+  active_mvp_sources:
+    - "reddit"
+    - "app_store_reviews"
+    - "product_hunt_rss"
+    - "tech_news_rss"
+  future_sources:
+    - "youtube_comments"
+  not_implemented:
+    - "x"
+    - "instagram"
+    - "tiktok"
+  rationale:
+    reddit: "Best long-form user voice signal. Works via PRAW OAuth from cloud; public JSON works locally."
+    app_store_reviews: "Apple App Store RSS + Google Play. No auth, no IP blocks, real user product feedback."
+    product_hunt_rss: "AI product launches and early adopter signals."
+    tech_news_rss: "Industry context layer."
+    excluded: "X/Instagram/TikTok excluded due to API cost, noise, and compliance complexity."
+
+# ─────────────────────────────────────────────
+# QUERY DESIGN RULES
+# ─────────────────────────────────────────────
+query_design_rules:
+  - "Tag every collected item with: market_track, matched_keyword, source, subreddit."
+  - "Use track-specific keyword groups — do not treat all keywords equally."
+  - "If a track has no collected data in a run, report it under Missing Coverage."
+  - "Do not over-index on Replika and CharacterAI — they represent only the AI companion app track."
+  - "Use ai_office_hardware as an adjacent signal track for privacy, ambient recording, and physical AI interface signals."
+  - "Emotional_need_adjacent content must never be framed as conversion or acquisition opportunity."
+
+# ─────────────────────────────────────────────
+# EXCLUSION KEYWORDS (global — applied to all tracks)
+# ─────────────────────────────────────────────
+exclusion_keywords:
+  - "NSFW"
+  - "sex robot"
+  - "adult companion"
+  - "porn"
+  - "erotic"
+  - "dating scam"
+  - "crypto"
+  - "stock pump"
+  - "giveaway"
+  - "affiliate"
+  - "coupon"
+  - "discount code"
+  - "jailbreak"
+  - "piracy"
+  - "torrent"
+  - "18+"
+
+# ─────────────────────────────────────────────
+# AUTOMATION SCHEDULE
+# ─────────────────────────────────────────────
+automation:
+  schedule_frequency: "daily"
+  run_time_utc: "17:00"
+  timezone_note: "GitHub Actions runs in UTC. 17:00 UTC ≈ 09:00 PST / 10:00 PDT."
+  manual_trigger: true
+  output_frequency: "report every 3 collect cycles (see report_schedule above)"
+  failure_notification: "github_actions_log_only"
+
+# ─────────────────────────────────────────────
+# APP STORE REVIEW SOURCES
+# Apple App Store (iTunes RSS, no auth) + Google Play (google-play-scraper)
+# These work from GitHub Actions cloud runners — no IP restrictions.
+# market_track must match a key in market_coverage_tracks above.
+# ─────────────────────────────────────────────
+app_store_apps:
+  - name: "Replika"
+    apple_id: "1468350373"
+    google_play_id: "ai.replika.app"
+    market_track: "ai_companion_apps"
+
+  - name: "Character.AI"
+    apple_id: "1633122697"
+    google_play_id: "com.nianticlabs.character"
+    market_track: "ai_companion_apps"
+
+  - name: "Nomi AI"
+    apple_id: "6443698054"
+    google_play_id: "ai.nomi.android"
+    market_track: "ai_companion_apps"
+
+  - name: "Kindroid"
+    apple_id: "6449451117"
+    google_play_id: "ai.kindroid.app"
+    market_track: "ai_companion_apps"
+
+  - name: "Moxie Robot"
+    apple_id: "1455105094"
+    google_play_id: "com.embodied.moxie"
+    market_track: "physical_ai_companions"
+
+# DATA COLLECTION PARAMETERS
+collection:
+  lookback_window: "24h"
+  post_limit_per_run: 60
+  comment_limit_per_post: 20
+  minimum_comment_length: 120
+  sort_by: "new"
+
+# CLEANING RULES
+cleaning:
+  remove_duplicates: true
+  remove_deleted_content: true
+  remove_short_comments: true
+  remove_bot_like_content: true
+  remove_low_signal_reactions: true
+  remove_off_topic_ai_debates: true
+  keep:
+    user_stories: true
+    specific_complaints: true
+    feature_requests: true
+    product_comparisons: true
+    purchase_concerns: true
+    trust_and_privacy_mentions: true
+  low_signal_patterns:
+    - "^lol$"
+    - "^same$"
+    - "^cool$"
+    - "^this$"
+    - "^wow$"
+    - "robots will (kill|destroy|take over)"
+    - "ai (will|is going to) (kill|destroy|replace) (us|humans|everyone)"
+
+# ANALYSIS LAYER
+analysis:
+  method_selection_mode: "bounded_auto_select"
+  sample_size_thresholds:
+    small: 50
+    medium: 200
+    large: 201
+  default_pipeline:
+    - "relevance_filtering"
+    - "qualitative_content_analysis"
+    - "sentiment_and_emotion_labeling"
+    - "product_signal_classification"
+    - "priority_scoring"
+    - "recommended_action_matching"
+    - "report_generation"
+  optional_methods:
+    embedding_based_clustering: false
+    kmeans_clustering: false
+    topic_modeling: false
+    trend_comparison: true
+    novelty_detection: true
+    selected_quote_extraction: true
+    dashboard_export: false
+
+# EMOTION LABELS
+emotion_labels:
+  baseline:
+    - loneliness
+    - comfort
+    - curiosity
+    - skepticism
+    - distrust
+    - anxiety
+    - embarrassment
+    - excitement
+    - creepiness
+    - affection
+    - novelty
+    - fatigue
+    - resistance
+    - dependency
+    - felt_seen
+  auto_discovery:
+    enabled: true
+    min_occurrences_per_run: 2
+    promotion_threshold_runs: 3
+
+# INSIGHT GENERATION POLICY
+insight_policy:
+  max_new_insights_per_report: 5
+  min_evidence_per_insight: 2
+  allow_zero_new_insight_days: true
+  carry_forward_existing: true
+  update_on_new_evidence: true
+  sort_order:
+    1: "new_high_priority"
+    2: "updated_existing"
+    3: "persistent_watchlist"
+    4: "declining_signals"
+    5: "noise_log"
+
+# PRIORITY SCORING
+priority_scoring:
+  dimensions:
+    - frequency
+    - emotional_intensity
+    - strategic_relevance
+    - actionability
+    - novelty
+    - risk_level
+  score_formulas:
+    opportunity_score: "frequency + emotional_intensity + strategic_relevance + actionability + novelty"
+    risk_score: "frequency + emotional_intensity + strategic_relevance + risk_level"
+  thresholds:
+    opportunity:
+      high: 20
+      medium_low: 13
+    risk:
+      high: 16
+      medium_low: 10
+  special_rules:
+    - "If emotional_intensity == 5 AND frequency == 1: classify as Research Follow-up."
+    - "If trust or privacy concern appears repeatedly: minimum priority = medium."
+    - "If strategic_relevance == 5 AND actionability >= 4: recommend experiment even at moderate frequency."
+    - "Opportunity and Risk signals must be displayed in separate report sections."
+
+# CONFIDENCE SCORING
+confidence:
+  levels:
+    high: "Repeated across multiple posts or subreddits with specific, concrete user evidence."
+    medium: "Repeated within one source, or supported by several comments in one thread."
+    low: "Single high-signal anecdote or weakly repeated theme."
+  source_limitation: >
+    Reddit signals are directional qualitative signals, not market-wide demand proof.
+    All insights require validation before driving major product decisions.
+
+# REPORT OUTPUT
+report:
+  output_dir: "reports/daily"
+  filename_format: "YYYY-MM-DD.md"
+  json_output: true
+  quotes_output: true
+  sections:
+    - run_metadata
+    - track_coverage_summary
+    - source_limitation
+    - new_signals_today
+    - updated_signals
+    - persistent_watchlist
+    - declining_signals
+    - missing_coverage
+    - noise_log
+    - newly_proposed_emotion_labels
+    - appendix
+
+# ETHICS BOUNDARIES
+ethics:
+  do_not:
+    - "Diagnose or infer users mental health conditions."
+    - "Treat vulnerable user content as a conversion or acquisition opportunity."
+    - "Store author usernames, profile links, or any user-identifying data."
+    - "Produce manipulative engagement recommendations."
+    - "Overstate confidence: Reddit signals are directional, not conclusive."
+  must_do:
+    - "Flag emotional dependency, manipulation risk, and privacy concerns as safety signals."
+    - "Label content from emotional_need_adjacent subreddits with vulnerability_flag: true."
+    - "Include a Source Limitation section in every report."
+    - "Show Missing Coverage for any track with no data in a run."
+
 # DATA COLLECTION PARAMETERS
 collection:
   lookback_window: "24h"
