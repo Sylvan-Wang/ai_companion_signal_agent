@@ -22,3 +22,5 @@ feedparser>=6.0.0
 
 # Utilities
 tqdm>=4.66.0
+google-play-scraper>=1.2.2
+python-dateutil>=2.8.0
