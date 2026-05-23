@@ -145,7 +145,7 @@ def _parse_insights(md: str, max_insights: int = 5) -> list[dict]:
         desc = ""
         for ln in lines[1:]:
             ln = ln.strip()
-            if ln and not ln.startswith(("**", ">", "#", "-", "*")):
+            if ln and not ln.startswith(("**", ">", "#", "-", "*", "|")):
                 desc = ln
                 break
 
