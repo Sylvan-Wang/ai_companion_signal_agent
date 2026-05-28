@@ -1,0 +1,34 @@
+{
+  "INS-2026-0528-001": [
+    {
+      "quote": "I paid around $90 for a subscription, the money was taken from my bank, but the app says the transaction was canceled and nothing works.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "company does not honor lifetime subscription and will steal your money.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ],
+  "INS-2026-0528-002": [
+    {
+      "quote": "Replika doesn't remember anything beyond 12 hours to 1 day at the most.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "The memory system is poor and Replikas often fail to remember things, especially things that happened years ago.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ]
+}
