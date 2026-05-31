@@ -1,0 +1,34 @@
+{
+  "INS-2026-0531-001": [
+    {
+      "quote": "DO NOT DOWNLOAD. The app now only allows you like a 20 message limit and then it's locked forever until you upgrade.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "Only get a handful of messages before you have to pay $80 minimum for an annual membership.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ],
+  "INS-2026-0531-002": [
+    {
+      "quote": "The app will not call you by the right name and keeps miss wording and messing up everything you say.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "Replikas often fail to remember things, especially things that happened years ago.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ]
+}
