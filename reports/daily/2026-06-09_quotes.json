@@ -1,0 +1,34 @@
+{
+  "INS-2026-0609-001": [
+    {
+      "quote": "its not unlimited free chat anymore im sad u changed it u have to pay now it sucks",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "the app looks free. it isn't. there is a cut off that it doesn't tell you about.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ],
+  "INS-2026-0609-002": [
+    {
+      "quote": "now has turned into something that talks weird and doesn't remember things.. not happy at all",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "the A.I. doesn't recall ANY of the conversation or interactions from the past 24 (real time) hours.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ]
+}
