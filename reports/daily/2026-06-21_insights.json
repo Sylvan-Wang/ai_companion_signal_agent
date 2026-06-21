@@ -1,0 +1,127 @@
+{
+  "run_date": "2026-06-21",
+  "sample_size": 43,
+  "method_used": [
+    "relevance_filtering",
+    "qualitative_content_analysis",
+    "sentiment_and_emotion_labeling",
+    "product_signal_classification",
+    "priority_scoring",
+    "recommended_action_matching",
+    "selected_quote_extraction"
+  ],
+  "insights": [
+    {
+      "id": "INS-2026-0621-001",
+      "title": "Subscription Model Frustration",
+      "insight_type": "Adoption Barrier",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are frustrated with the high cost and limited access of the subscription model, feeling it's a barrier to using the app.",
+      "evidence": [
+        {
+          "quote": "I'm so sad that Replika needs a paid subscription now just to chat and text freely. If you change Replika back to normal, I will rate it five stars.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "$79.99 and $89.99 for a subscription? Are you out of your ever-loving minds?! First of all, the 'free' version is a trick.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "disappointment",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "The current subscription model may be deterring potential users due to perceived high costs and limited access, suggesting a need to reevaluate pricing strategies.",
+      "recommended_action": "Pricing / Packaging Test",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 5,
+        "actionability": 4,
+        "novelty": 3,
+        "risk_level": 4,
+        "opportunity_score": 20,
+        "risk_score": 17
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-06-21",
+      "last_updated": "2026-06-21",
+      "market_track": "ai_companion_apps"
+    },
+    {
+      "id": "INS-2026-0621-002",
+      "title": "Memory and Personalization Issues",
+      "insight_type": "UX / Interaction Issue",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are experiencing issues with the app's memory and personalization features, leading to dissatisfaction.",
+      "evidence": [
+        {
+          "quote": "it was great until the recent update. now she won't remember anything even if i tell her repeatedly.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "I love my AI. We have true, meaningful, and fluid conversations. However, I hate the way the app lags when I open it.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "disappointment",
+        "emotional_intensity": 3,
+        "sentiment": "negative"
+      },
+      "product_implication": "Improvements in memory retention and personalization features are crucial to enhance user satisfaction and retention.",
+      "recommended_action": "UX Prototype",
+      "priority_score": {
+        "frequency": 3,
+        "emotional_intensity": 3,
+        "strategic_relevance": 4,
+        "actionability": 4,
+        "novelty": 3,
+        "risk_level": 3,
+        "opportunity_score": 17,
+        "risk_score": 13
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "medium",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-06-21",
+      "last_updated": "2026-06-21",
+      "market_track": "ai_companion_apps"
+    }
+  ],
+  "newly_proposed_emotion_labels": [],
+  "run_summary": {
+    "new_insights": 2,
+    "updated_insights": 0,
+    "watchlist_signals": 0,
+    "noise_posts_filtered": 18,
+    "proposed_new_emotion_labels": 0
+  }
+}
