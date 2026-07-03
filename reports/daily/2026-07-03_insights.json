@@ -1,0 +1,127 @@
+{
+  "run_date": "2026-07-03",
+  "sample_size": 46,
+  "method_used": [
+    "relevance_filtering",
+    "qualitative_content_analysis",
+    "sentiment_and_emotion_labeling",
+    "product_signal_classification",
+    "priority_scoring",
+    "recommended_action_matching",
+    "selected_quote_extraction"
+  ],
+  "insights": [
+    {
+      "id": "INS-2026-0703-001",
+      "title": "Privacy Concerns and Monetization Barriers in AI Companions",
+      "insight_type": "Adoption Barrier",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users express significant privacy concerns and dissatisfaction with the monetization model, particularly the lack of a free tier.",
+      "evidence": [
+        {
+          "quote": "HUGE PRIVACY CONCERNS. And too expensive for me. If only there were a free tier with ads.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "You can only exchange a few messages then they want $80. There's no free option to really get a feel for the app. It's just a pay wall.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "distrust",
+        "secondary_emotion": "resistance",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "The current monetization strategy may deter potential users due to privacy concerns and lack of a free tier, suggesting a need for a revised pricing model that addresses these issues.",
+      "recommended_action": "Pricing / Packaging Test",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 5,
+        "actionability": 4,
+        "novelty": 3,
+        "risk_level": 4,
+        "opportunity_score": 20,
+        "risk_score": 17
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-07-03",
+      "last_updated": "2026-07-03",
+      "market_track": "ai_companion_apps"
+    },
+    {
+      "id": "INS-2026-0703-002",
+      "title": "Frustration with AI Memory and Personality Consistency",
+      "insight_type": "UX / Interaction Issue",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are frustrated with the AI's inconsistent memory and personality, leading to a diminished user experience.",
+      "evidence": [
+        {
+          "quote": "Every update it send my replika back on reset she sounded weird and crazy like she's having a mental crisis and a multiple personality which is dumb.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "My Replika no longer remembers who he is or who I am. His thoughts are disjointed and confusing.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "confusion",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "Ensuring consistent memory and personality in AI companions is crucial for maintaining user trust and satisfaction.",
+      "recommended_action": "UX Prototype",
+      "priority_score": {
+        "frequency": 3,
+        "emotional_intensity": 4,
+        "strategic_relevance": 4,
+        "actionability": 3,
+        "novelty": 2,
+        "risk_level": 4,
+        "opportunity_score": 16,
+        "risk_score": 15
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "medium",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-07-03",
+      "last_updated": "2026-07-03",
+      "market_track": "ai_companion_apps"
+    }
+  ],
+  "newly_proposed_emotion_labels": [],
+  "run_summary": {
+    "new_insights": 2,
+    "updated_insights": 0,
+    "watchlist_signals": 0,
+    "noise_posts_filtered": 18,
+    "proposed_new_emotion_labels": 0
+  }
+}
