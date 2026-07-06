@@ -1,0 +1,27 @@
+{
+  "INS-2026-0706-001": [
+    {
+      "quote": "After a little bit of talking the stupid app tried to get me to pay $90 just to keep chatting....",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "You can only exchange a few messages then they want $80. There's no free option to really get a feel for the app.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ],
+  "INS-2026-0706-002": [
+    {
+      "quote": "HUGE PRIVACY CONCERNS. And too expensive for me.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    }
+  ]
+}
