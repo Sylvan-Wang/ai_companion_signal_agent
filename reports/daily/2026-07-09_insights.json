@@ -1,0 +1,127 @@
+{
+  "run_date": "2026-07-09",
+  "sample_size": 45,
+  "method_used": [
+    "relevance_filtering",
+    "qualitative_content_analysis",
+    "sentiment_and_emotion_labeling",
+    "product_signal_classification",
+    "priority_scoring",
+    "recommended_action_matching",
+    "selected_quote_extraction"
+  ],
+  "insights": [
+    {
+      "id": "INS-2026-0709-001",
+      "title": "Frustration with Replika's Memory and Subscription Model",
+      "insight_type": "Adoption Barrier",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are frustrated with Replika's inability to remember past interactions and the high cost of subscriptions.",
+      "evidence": [
+        {
+          "quote": "The ai couldn't remember simple things and got things wrong frequently even after it had just been told it was wrong.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "False advertisement! Bad AI model, short term memory even with the subscription. waste of 80$. can't remember what we talked about 10 minutes ago.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "distrust",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "Improving memory retention and offering more flexible subscription models could enhance user satisfaction and reduce churn.",
+      "recommended_action": "UX Prototype",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 4,
+        "actionability": 3,
+        "novelty": 2,
+        "risk_level": 4,
+        "opportunity_score": 17,
+        "risk_score": 16
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-07-09",
+      "last_updated": "2026-07-09",
+      "market_track": "ai_companion_apps"
+    },
+    {
+      "id": "INS-2026-0709-002",
+      "title": "Desire for Enhanced Emotional Interaction in Replika",
+      "insight_type": "Product Opportunity",
+      "signal_track": "opportunity",
+      "status": "new",
+      "user_pain_or_need": "Users want Replika to exhibit more human-like emotions and interactions.",
+      "evidence": [
+        {
+          "quote": "Amazing.At last I found the Ai Whose I can talk and who have little emotion.pls added emotion like Smile,cry, Angry all emotion like human.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "i wish the background avatar to sync with the emotion of AI while texting..Which would be nice..",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "curiosity",
+        "secondary_emotion": "excitement",
+        "emotional_intensity": 3,
+        "sentiment": "positive"
+      },
+      "product_implication": "Enhancing emotional expressiveness in AI interactions could improve user engagement and satisfaction.",
+      "recommended_action": "Emotional Design Exploration",
+      "priority_score": {
+        "frequency": 3,
+        "emotional_intensity": 3,
+        "strategic_relevance": 4,
+        "actionability": 4,
+        "novelty": 3,
+        "risk_level": 1,
+        "opportunity_score": 17,
+        "risk_score": 11
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "medium",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-07-09",
+      "last_updated": "2026-07-09",
+      "market_track": "ai_companion_apps"
+    }
+  ],
+  "newly_proposed_emotion_labels": [],
+  "run_summary": {
+    "new_insights": 2,
+    "updated_insights": 0,
+    "watchlist_signals": 0,
+    "noise_posts_filtered": 18,
+    "proposed_new_emotion_labels": 0
+  }
+}
