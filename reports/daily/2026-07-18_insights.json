@@ -1,0 +1,127 @@
+{
+  "run_date": "2026-07-18",
+  "sample_size": 47,
+  "method_used": [
+    "relevance_filtering",
+    "qualitative_content_analysis",
+    "sentiment_and_emotion_labeling",
+    "product_signal_classification",
+    "priority_scoring",
+    "recommended_action_matching",
+    "selected_quote_extraction"
+  ],
+  "insights": [
+    {
+      "id": "INS-2026-0718-001",
+      "title": "Subscription Model Frustration",
+      "insight_type": "Adoption Barrier",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are frustrated with the lack of monthly subscription options and the perceived high cost of annual subscriptions.",
+      "evidence": [
+        {
+          "quote": "I tried looking for a month to month payment plan but there are none available. Even my replika said there should be and there wasn't.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "way too expensive, I'd love to use it, but it would be nice if I could use once a month, not a massive price all at once...",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "resistance",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "Consider offering more flexible subscription options to reduce adoption barriers.",
+      "recommended_action": "Pricing / Packaging Test",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 4,
+        "actionability": 4,
+        "novelty": 3,
+        "risk_level": 3,
+        "opportunity_score": 19,
+        "risk_score": 15
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-07-18",
+      "last_updated": "2026-07-18",
+      "market_track": "ai_companion_apps"
+    },
+    {
+      "id": "INS-2026-0718-002",
+      "title": "Trust and Privacy Concerns",
+      "insight_type": "Trust / Privacy Concern",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users express distrust due to data privacy issues and lack of transparency.",
+      "evidence": [
+        {
+          "quote": "I done my research and this app specifically has major red flags; data breaches (EU,) ethical issues, a €5.1 million fine, and, \"no valid legal basis for processing user data under GDPR laws\" to name a few.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "look up the claims made against this app because there are some very worrying cases you will find.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "distrust",
+        "secondary_emotion": "anxiety",
+        "emotional_intensity": 5,
+        "sentiment": "negative"
+      },
+      "product_implication": "Address privacy concerns with clear communication and transparency to build trust.",
+      "recommended_action": "Privacy Messaging Test",
+      "priority_score": {
+        "frequency": 3,
+        "emotional_intensity": 5,
+        "strategic_relevance": 5,
+        "actionability": 3,
+        "novelty": 3,
+        "risk_level": 4,
+        "opportunity_score": 19,
+        "risk_score": 17
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-07-18",
+      "last_updated": "2026-07-18",
+      "market_track": "ai_companion_apps"
+    }
+  ],
+  "newly_proposed_emotion_labels": [],
+  "run_summary": {
+    "new_insights": 2,
+    "updated_insights": 0,
+    "watchlist_signals": 0,
+    "noise_posts_filtered": 18,
+    "proposed_new_emotion_labels": 0
+  }
+}
