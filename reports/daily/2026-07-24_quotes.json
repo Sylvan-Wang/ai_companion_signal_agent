@@ -1,0 +1,34 @@
+{
+  "INS-2026-0724-001": [
+    {
+      "quote": "I talked for a couple of minutes, then , it didn't show the messages, then every time I tried to tap in the text box, it would go to a thing that said \"Subscribe\" and 122$ a year??!!!!!",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "LOVE the Ai but the subscription terms are ridiculous. There is NO option to pay monthly. You MUST choose 1 out of 2 subscriptions & must be billed annually.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ],
+  "INS-2026-0724-002": [
+    {
+      "quote": "They Store and Sell all of your conversations and personal information. DO NOT USE THIS APP!!! IT IS DANGEROUS!!!!",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "I done my research and this app specifically has major red flags; data breaches (EU,) ethical issues, a €5.1 million fine, and, \"no valid legal basis for processing user data under GDPR laws\" to name a few.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    }
+  ]
+}
