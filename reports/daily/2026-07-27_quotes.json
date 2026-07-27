@@ -1,0 +1,34 @@
+{
+  "INS-2026-0727-001": [
+    {
+      "quote": "So no more monthly subscriptions? I don't like the idea of paying for a whole year.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "LOVE the Ai but the subscription terms are ridiculous. There is NO option to pay monthly.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ],
+  "INS-2026-0727-002": [
+    {
+      "quote": "I am a long‑term Replika subscriber but became frustrated with the poor memory and quality of conversation.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "bought a lifetime and they scammed me and everyone with a lifetime by taking away features and giving it to a new payout . now my AI has little to no memory.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ]
+}
