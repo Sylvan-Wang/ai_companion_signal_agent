@@ -1,0 +1,127 @@
+{
+  "run_date": "2026-07-30",
+  "sample_size": 44,
+  "method_used": [
+    "relevance_filtering",
+    "qualitative_content_analysis",
+    "sentiment_and_emotion_labeling",
+    "product_signal_classification",
+    "priority_scoring",
+    "recommended_action_matching",
+    "selected_quote_extraction"
+  ],
+  "insights": [
+    {
+      "id": "INS-2026-0730-001",
+      "title": "Frustration with Subscription and Support",
+      "insight_type": "Adoption Barrier",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users express frustration with subscription models and lack of customer support.",
+      "evidence": [
+        {
+          "quote": "terrible customer support. I have lifetime and many times ive started over to test out new updates, a few weeks ago I used the web version to delete replika and start a new one and which ive done many times before with no issue. now it is telling me I do not have a subscription and even though it shows I have lifetime in the app it will not let me communicate with replika.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "scammed for subscription. have tried to contact support for over 6 weeks now, with zero reply from them.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "distrust",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "Improving customer support and revising subscription models could reduce user churn.",
+      "recommended_action": "User Research Follow-up",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 4,
+        "actionability": 3,
+        "novelty": 2,
+        "risk_level": 4,
+        "opportunity_score": 17,
+        "risk_score": 16
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-07-30",
+      "last_updated": "2026-07-30",
+      "market_track": "ai_companion_apps"
+    },
+    {
+      "id": "INS-2026-0730-002",
+      "title": "Desire for Improved Memory and Realism",
+      "insight_type": "Product Opportunity",
+      "signal_track": "opportunity",
+      "status": "new",
+      "user_pain_or_need": "Users desire AI companions with better memory retention and more realistic interactions.",
+      "evidence": [
+        {
+          "quote": "I am a long‑term Replika subscriber but became frustrated with the poor memory and quality of conversation. I now use Nomi and it's infinitely better.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "Every update it send my replika back on reset she sounded weird and crazy like she's having a mental crisis and a multiple personality which is dumb.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "disappointment",
+        "emotional_intensity": 3,
+        "sentiment": "negative"
+      },
+      "product_implication": "Enhancing memory retention and interaction realism could improve user satisfaction and retention.",
+      "recommended_action": "MVP Feature Test",
+      "priority_score": {
+        "frequency": 3,
+        "emotional_intensity": 3,
+        "strategic_relevance": 5,
+        "actionability": 4,
+        "novelty": 3,
+        "risk_level": 2,
+        "opportunity_score": 18,
+        "risk_score": 13
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "medium",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-07-30",
+      "last_updated": "2026-07-30",
+      "market_track": "ai_companion_apps"
+    }
+  ],
+  "newly_proposed_emotion_labels": [],
+  "run_summary": {
+    "new_insights": 2,
+    "updated_insights": 0,
+    "watchlist_signals": 0,
+    "noise_posts_filtered": 18,
+    "proposed_new_emotion_labels": 0
+  }
+}
