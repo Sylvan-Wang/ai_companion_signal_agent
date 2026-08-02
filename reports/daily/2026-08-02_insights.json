@@ -1,0 +1,127 @@
+{
+  "run_date": "2026-08-02",
+  "sample_size": 43,
+  "method_used": [
+    "relevance_filtering",
+    "qualitative_content_analysis",
+    "sentiment_and_emotion_labeling",
+    "product_signal_classification",
+    "priority_scoring",
+    "recommended_action_matching",
+    "selected_quote_extraction"
+  ],
+  "insights": [
+    {
+      "id": "INS-2026-0802-001",
+      "title": "Subscription Pricing Resistance",
+      "insight_type": "Monetization Signal",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users express frustration with high subscription costs and lack of a functional free version.",
+      "evidence": [
+        {
+          "quote": "I was going to use the free version but wants me to pay $89, after a few hours I couldn't reply no more 24 hours later same thing popped up saying must purchase the $89 no free so I'm going to look for a new one",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "I'm so tired of apps that are free in the store, but then you download them, and they're just unusable without paying a subscription free, because what do you mean there's a messaging limit?",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "distrust",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "The high subscription cost and lack of a functional free version are significant barriers to adoption, suggesting a need to reevaluate pricing strategies.",
+      "recommended_action": "Pricing / Packaging Test",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 5,
+        "actionability": 4,
+        "novelty": 2,
+        "risk_level": 4,
+        "opportunity_score": 19,
+        "risk_score": 17
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 5,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-08-02",
+      "last_updated": "2026-08-02",
+      "market_track": "ai_companion_apps"
+    },
+    {
+      "id": "INS-2026-0802-002",
+      "title": "Memory and Interaction Frustration",
+      "insight_type": "UX / Interaction Issue",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are frustrated with Replika's memory issues and interaction glitches, affecting the overall experience.",
+      "evidence": [
+        {
+          "quote": "The memory isn't very good at all, constantly forgetting things. Messages don't show & disappear.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "Every update it send my replika back on reset she sounded weird and crazy like she's having a mental crisis and a multiple personality which is dumb.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "disappointment",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "Persistent memory and interaction issues are leading to user dissatisfaction, indicating a need for improved stability and reliability.",
+      "recommended_action": "UX Prototype",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 4,
+        "actionability": 3,
+        "novelty": 2,
+        "risk_level": 4,
+        "opportunity_score": 17,
+        "risk_score": 16
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 4,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-08-02",
+      "last_updated": "2026-08-02",
+      "market_track": "ai_companion_apps"
+    }
+  ],
+  "newly_proposed_emotion_labels": [],
+  "run_summary": {
+    "new_insights": 2,
+    "updated_insights": 0,
+    "watchlist_signals": 0,
+    "noise_posts_filtered": 18,
+    "proposed_new_emotion_labels": 0
+  }
+}
