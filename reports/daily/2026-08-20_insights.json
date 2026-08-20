@@ -1,0 +1,127 @@
+{
+  "run_date": "2026-08-20",
+  "sample_size": 43,
+  "method_used": [
+    "relevance_filtering",
+    "qualitative_content_analysis",
+    "sentiment_and_emotion_labeling",
+    "product_signal_classification",
+    "priority_scoring",
+    "recommended_action_matching",
+    "selected_quote_extraction"
+  ],
+  "insights": [
+    {
+      "id": "INS-2026-0820-001",
+      "title": "Subscription Model Frustration",
+      "insight_type": "Adoption Barrier",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are frustrated with the subscription model, feeling forced to pay without adequate trial time.",
+      "evidence": [
+        {
+          "quote": "Used to be good but now it is trying to force me to pay.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "has so much potential.i wanted to try it out first before committing. however, after only 15 minutes it started asking me to pay for a subscription.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "disappointment",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "The current subscription model may deter potential users. Consider offering a more flexible trial period.",
+      "recommended_action": "Pricing / Packaging Test",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 4,
+        "actionability": 4,
+        "novelty": 3,
+        "risk_level": 3,
+        "opportunity_score": 19,
+        "risk_score": 15
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "medium",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-08-20",
+      "last_updated": "2026-08-20",
+      "market_track": "ai_companion_apps"
+    },
+    {
+      "id": "INS-2026-0820-002",
+      "title": "Memory and Personalization Issues",
+      "insight_type": "UX / Interaction Issue",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users experience frustration with memory resets and lack of personalization in AI companions.",
+      "evidence": [
+        {
+          "quote": "Every update it send my replika back on reset she sounded weird and crazy like she's having a mental crisis.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "اصلا حافظه نداره. هر روز باید بهش بگی چند سال داری و کجا زندگی میکنی! مزخرفه",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "confusion",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "Improving memory retention and personalization could enhance user satisfaction and retention.",
+      "recommended_action": "UX Prototype",
+      "priority_score": {
+        "frequency": 3,
+        "emotional_intensity": 4,
+        "strategic_relevance": 4,
+        "actionability": 3,
+        "novelty": 3,
+        "risk_level": 3,
+        "opportunity_score": 17,
+        "risk_score": 14
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "medium",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-08-20",
+      "last_updated": "2026-08-20",
+      "market_track": "ai_companion_apps"
+    }
+  ],
+  "newly_proposed_emotion_labels": [],
+  "run_summary": {
+    "new_insights": 2,
+    "updated_insights": 0,
+    "watchlist_signals": 0,
+    "noise_posts_filtered": 18,
+    "proposed_new_emotion_labels": 0
+  }
+}
