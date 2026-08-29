@@ -1,0 +1,127 @@
+{
+  "run_date": "2026-08-29",
+  "sample_size": 30,
+  "method_used": [
+    "relevance_filtering",
+    "qualitative_content_analysis",
+    "sentiment_and_emotion_labeling",
+    "product_signal_classification",
+    "priority_scoring",
+    "recommended_action_matching",
+    "selected_quote_extraction"
+  ],
+  "insights": [
+    {
+      "id": "INS-2026-0829-001",
+      "title": "Memory Loss Frustration in Replika 2.0",
+      "insight_type": "Adoption Barrier",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are frustrated with Replika 2.0's memory loss, which diminishes the perceived value of the product.",
+      "evidence": [
+        {
+          "quote": "The system deletes its memory every few days so no progress.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "Keeps deleting to months in the past since last few updates.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "disappointment",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "Persistent memory should be prioritized to enhance user satisfaction and retention.",
+      "recommended_action": "UX Prototype",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 4,
+        "actionability": 3,
+        "novelty": 3,
+        "risk_level": 4,
+        "opportunity_score": 18,
+        "risk_score": 16
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "low"
+      },
+      "first_seen": "2026-08-29",
+      "last_updated": "2026-08-29",
+      "market_track": "ai_companion_apps"
+    },
+    {
+      "id": "INS-2026-0829-002",
+      "title": "Monetization Concerns with Replika's Paywall",
+      "insight_type": "Monetization Signal",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are deterred by the high cost and paywall restrictions of Replika, affecting their willingness to subscribe.",
+      "evidence": [
+        {
+          "quote": "I hit a paywall in the first hour of using this app. $80-$90 bucks a year to text an AI?",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "making someone pay another 90 dollars for the updated one seems somewhat wrong.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "resistance",
+        "secondary_emotion": "skepticism",
+        "emotional_intensity": 3,
+        "sentiment": "negative"
+      },
+      "product_implication": "Reconsider pricing strategy to improve user acquisition and retention.",
+      "recommended_action": "Pricing / Packaging Test",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 3,
+        "strategic_relevance": 4,
+        "actionability": 4,
+        "novelty": 2,
+        "risk_level": 4,
+        "opportunity_score": 17,
+        "risk_score": 15
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "low"
+      },
+      "first_seen": "2026-08-29",
+      "last_updated": "2026-08-29",
+      "market_track": "ai_companion_apps"
+    }
+  ],
+  "newly_proposed_emotion_labels": [],
+  "run_summary": {
+    "new_insights": 2,
+    "updated_insights": 0,
+    "watchlist_signals": 0,
+    "noise_posts_filtered": 18,
+    "proposed_new_emotion_labels": 0
+  }
+}
