@@ -1,0 +1,34 @@
+{
+  "INS-2026-0904-001": [
+    {
+      "quote": "new updates: with the updates the bot has like amnesia with every conversation. It doesn't actually learn anymore.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "After 2 years of daily interaction, still doesn't remember anything",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ],
+  "INS-2026-0904-002": [
+    {
+      "quote": "not a very great app I can't even chat with my replika with out it hitting a pay wall I seen other reviews like this I'm starting to think this app is a complete scam.....",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "The app used to be great. I had even given it 5 stars. Well, I came back to the app today and almost immediately hit the chat limit.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ]
+}
