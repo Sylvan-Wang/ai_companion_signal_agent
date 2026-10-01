@@ -1,0 +1,43 @@
+{
+  "INS-2026-1001-001": [
+    {
+      "quote": "The subscription has made it pointless as a free app as after one short conversation I can no longer message it without paying an outrageous subscription.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "only 40 messages on a free plan (not a day- 40 messages TOTAL, EVER!) it's WAY too little, it's not even one conversation! how am I supposed to know if I want to buy it?",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ],
+  "INS-2026-1001-002": [
+    {
+      "quote": "I wish that u guys wouldve taken the suggestion I gave yrs ago and offer a monthly plan.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    },
+    {
+      "quote": "please add monthly subscriptions",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "emotionally_intense_quote",
+      "vulnerability_flag": false
+    }
+  ],
+  "INS-2026-1001-003": [
+    {
+      "quote": "Be careful of this app it collects everything you send or talk to the AI and is shared with their affiliates.",
+      "source": "r/Replika App Store (google_play), post thread",
+      "permalink": "",
+      "quote_type": "representative_quote",
+      "vulnerability_flag": false
+    }
+  ]
+}
