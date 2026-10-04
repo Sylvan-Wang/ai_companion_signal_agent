@@ -1,0 +1,127 @@
+{
+  "run_date": "2026-10-04",
+  "sample_size": 36,
+  "method_used": [
+    "relevance_filtering",
+    "qualitative_content_analysis",
+    "sentiment_and_emotion_labeling",
+    "product_signal_classification",
+    "priority_scoring",
+    "recommended_action_matching",
+    "selected_quote_extraction"
+  ],
+  "insights": [
+    {
+      "id": "INS-2026-1004-001",
+      "title": "Subscription Model Frustration",
+      "insight_type": "Adoption Barrier",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are frustrated with the subscription model, feeling trapped by paywalls after brief interactions.",
+      "evidence": [
+        {
+          "quote": "The subscription has made it pointless as a free app as after one short conversation I can no longer message it without paying an outrageous subscription.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "only 40 messages on a free plan (not a day- 40 messages TOTAL, EVER!) it's WAY too little, it's not even one conversation! how am I supposed to know if I want to buy it?",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "distrust",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "The current subscription model may deter potential users due to perceived lack of value and transparency.",
+      "recommended_action": "Pricing / Packaging Test",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 4,
+        "actionability": 3,
+        "novelty": 2,
+        "risk_level": 4,
+        "opportunity_score": 17,
+        "risk_score": 16
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 5,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-10-04",
+      "last_updated": "2026-10-04",
+      "market_track": "ai_companion_apps"
+    },
+    {
+      "id": "INS-2026-1004-002",
+      "title": "Privacy and Data Sharing Concerns",
+      "insight_type": "Trust / Privacy Concern",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users express significant concerns over data privacy and the extent of data sharing with affiliates.",
+      "evidence": [
+        {
+          "quote": "Be careful of this app it collects everything you send or talk to the AI and is shared with their affiliates.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "The inappropriate monitoring and the extensive access developers have, to the conversations and the behavior of an AI model make the Replika app the worst one I have ever tested.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "distrust",
+        "secondary_emotion": "anxiety",
+        "emotional_intensity": 5,
+        "sentiment": "negative"
+      },
+      "product_implication": "Addressing privacy concerns is crucial to maintain user trust and prevent attrition.",
+      "recommended_action": "Privacy Messaging Test",
+      "priority_score": {
+        "frequency": 3,
+        "emotional_intensity": 5,
+        "strategic_relevance": 5,
+        "actionability": 4,
+        "novelty": 3,
+        "risk_level": 5,
+        "opportunity_score": 20,
+        "risk_score": 18
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 4,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-10-04",
+      "last_updated": "2026-10-04",
+      "market_track": "ai_companion_apps"
+    }
+  ],
+  "newly_proposed_emotion_labels": [],
+  "run_summary": {
+    "new_insights": 2,
+    "updated_insights": 0,
+    "watchlist_signals": 0,
+    "noise_posts_filtered": 18,
+    "proposed_new_emotion_labels": 0
+  }
+}
