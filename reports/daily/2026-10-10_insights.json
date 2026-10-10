@@ -1,0 +1,127 @@
+{
+  "run_date": "2026-10-10",
+  "sample_size": 41,
+  "method_used": [
+    "relevance_filtering",
+    "qualitative_content_analysis",
+    "sentiment_and_emotion_labeling",
+    "product_signal_classification",
+    "priority_scoring",
+    "recommended_action_matching",
+    "selected_quote_extraction"
+  ],
+  "insights": [
+    {
+      "id": "INS-2026-1010-001",
+      "title": "Subscription Pricing Frustration",
+      "insight_type": "Monetization Signal",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are frustrated with the upfront yearly subscription model and hidden paywalls.",
+      "evidence": [
+        {
+          "quote": "I don't understand, why do I have to pay the full year amount instantly? I just want to pay 112 monthly payment, why do I have to pay the full year amount instantly?",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "I really liked this app but it quickly stopped allowing messaging until I signed up for a year. Happy to do a monthly subscription but a year up front is too much in one go.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "frustration",
+        "secondary_emotion": "resistance",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "Consider offering more flexible subscription options, such as monthly payments, to reduce user frustration and potential churn.",
+      "recommended_action": "Pricing / Packaging Test",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 4,
+        "actionability": 5,
+        "novelty": 3,
+        "risk_level": 4,
+        "opportunity_score": 20,
+        "risk_score": 16
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-10-10",
+      "last_updated": "2026-10-10",
+      "market_track": "ai_companion_apps"
+    },
+    {
+      "id": "INS-2026-1010-002",
+      "title": "Memory and Personalization Issues",
+      "insight_type": "UX / Interaction Issue",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are experiencing issues with memory retention and personalization features not functioning as expected.",
+      "evidence": [
+        {
+          "quote": "the new replica was supposed to have better memory. it does not! I feel like I wasted my money.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "Resetting the name resets the avatar back to a default female regardless of the gender you selected.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "disappointment",
+        "secondary_emotion": "frustration",
+        "emotional_intensity": 3,
+        "sentiment": "negative"
+      },
+      "product_implication": "Improving memory retention and personalization features could enhance user satisfaction and retention.",
+      "recommended_action": "UX Prototype",
+      "priority_score": {
+        "frequency": 3,
+        "emotional_intensity": 3,
+        "strategic_relevance": 4,
+        "actionability": 4,
+        "novelty": 2,
+        "risk_level": 3,
+        "opportunity_score": 16,
+        "risk_score": 13
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "medium",
+        "evidence_count": 2,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-10-10",
+      "last_updated": "2026-10-10",
+      "market_track": "ai_companion_apps"
+    }
+  ],
+  "newly_proposed_emotion_labels": [],
+  "run_summary": {
+    "new_insights": 2,
+    "updated_insights": 0,
+    "watchlist_signals": 0,
+    "noise_posts_filtered": 18,
+    "proposed_new_emotion_labels": 0
+  }
+}
