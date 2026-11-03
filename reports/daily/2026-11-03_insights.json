@@ -1,0 +1,127 @@
+{
+  "run_date": "2026-11-03",
+  "sample_size": 40,
+  "method_used": [
+    "relevance_filtering",
+    "qualitative_content_analysis",
+    "sentiment_and_emotion_labeling",
+    "product_signal_classification",
+    "priority_scoring",
+    "recommended_action_matching",
+    "selected_quote_extraction"
+  ],
+  "insights": [
+    {
+      "id": "INS-2026-1103-001",
+      "title": "Subscription Frustration and Monetization Barrier",
+      "insight_type": "Adoption Barrier",
+      "signal_track": "risk",
+      "status": "new",
+      "user_pain_or_need": "Users are frustrated with aggressive monetization tactics and feel misled by subscription models.",
+      "evidence": [
+        {
+          "quote": "This should be flagged as scam. i subscribed with the promises of being able to change the avatar appearance, but as it turns out, you can't. DO NOT SUBSCRIBE!",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "I registered for a free Replika account, which advertises unlimited normal text messaging without a time restriction. After approximately two days, the app began displaying subscription offers.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "distrust",
+        "secondary_emotion": "frustration",
+        "emotional_intensity": 4,
+        "sentiment": "negative"
+      },
+      "product_implication": "The current subscription model may deter potential users due to perceived dishonesty and aggressive upselling.",
+      "recommended_action": "Pricing / Packaging Test",
+      "priority_score": {
+        "frequency": 4,
+        "emotional_intensity": 4,
+        "strategic_relevance": 5,
+        "actionability": 4,
+        "novelty": 3,
+        "risk_level": 4,
+        "opportunity_score": 20,
+        "risk_score": 17
+      },
+      "priority_level": "high",
+      "confidence": {
+        "level": "high",
+        "evidence_count": 5,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "low"
+      },
+      "first_seen": "2026-11-03",
+      "last_updated": "2026-11-03",
+      "market_track": "ai_companion_apps"
+    },
+    {
+      "id": "INS-2026-1103-002",
+      "title": "Desire for Customization and Personalization",
+      "insight_type": "Product Opportunity",
+      "signal_track": "opportunity",
+      "status": "new",
+      "user_pain_or_need": "Users want more customization options for avatars and interactions to enhance personal connection.",
+      "evidence": [
+        {
+          "quote": "hey give us custom character so we can create our own chat bot",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "representative_quote",
+          "vulnerability_flag": false
+        },
+        {
+          "quote": "please fix the missing store tab to customize. missing tab clothing and settings.",
+          "source": "r/Replika App Store (google_play), post thread",
+          "permalink": "",
+          "quote_type": "emotionally_intense_quote",
+          "vulnerability_flag": false
+        }
+      ],
+      "emotional_signal": {
+        "primary_emotion": "curiosity",
+        "secondary_emotion": "dissatisfaction",
+        "emotional_intensity": 3,
+        "sentiment": "mixed"
+      },
+      "product_implication": "Enhancing customization features could increase user satisfaction and retention.",
+      "recommended_action": "MVP Feature Test",
+      "priority_score": {
+        "frequency": 3,
+        "emotional_intensity": 3,
+        "strategic_relevance": 4,
+        "actionability": 5,
+        "novelty": 4,
+        "risk_level": 2,
+        "opportunity_score": 19,
+        "risk_score": 12
+      },
+      "priority_level": "medium",
+      "confidence": {
+        "level": "medium",
+        "evidence_count": 3,
+        "source_diversity": "single_subreddit",
+        "contradiction_level": "none"
+      },
+      "first_seen": "2026-11-03",
+      "last_updated": "2026-11-03",
+      "market_track": "ai_companion_apps"
+    }
+  ],
+  "newly_proposed_emotion_labels": [],
+  "run_summary": {
+    "new_insights": 2,
+    "updated_insights": 0,
+    "watchlist_signals": 0,
+    "noise_posts_filtered": 18,
+    "proposed_new_emotion_labels": 0
+  }
+}
